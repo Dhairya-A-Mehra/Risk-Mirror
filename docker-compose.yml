@@ -1,0 +1,94 @@
+version: "3.8"
+
+services:
+  # --- Application Services ---
+  auth_service:
+    build: ./backend/services/auth_service
+    ports:
+      - "8001:80"
+    volumes:
+      - ./backend/services/auth_service/app:/code/app
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/db
+
+  profile_service:
+    build: ./backend/services/profile_service
+    ports:
+      - "8002:80"
+    volumes:
+      - ./backend/services/profile_service/app:/code/app
+    depends_on:
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/db
+
+  simulation_service:
+    build: ./backend/services/simulation_service
+    ports:
+      - "8003:80"
+    volumes:
+      - ./backend/services/simulation_service/app:/code/app
+
+  ai_service:
+    build: ./backend/services/ai_service
+    ports:
+      - "8004:80"
+    volumes:
+      - ./backend/services/ai_service/app:/code/app
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+  # --- Data Processing Service ---
+  data_processor:
+    build: ./backend/data_processor # <<< CORRECTED PATH
+    ports:
+      - "8005:80"
+    volumes:
+      - ./backend/data_processor/app:/code/app
+    depends_on:
+      - kafka
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+
+  # --- Infrastructure Services ---
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=db
+      - POSTG-RES_USER=user
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092" # Port for other services
+      - "29092:29092" # Port for local machine access if needed
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+volumes:
+  postgres_data:
