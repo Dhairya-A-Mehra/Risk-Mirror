@@ -1,35 +1,5 @@
 # Risk-Mirror
 
-Overall file structure of this Risk-Mirror
-/risk-mirror/
-├── .github/ # For GitHub Actions (CI/CD workflows)
-│ └── workflows/
-│ ├── frontend-deploy.yml # Workflow to deploy frontend to Vercel
-│ └── backend-deploy.yml # Workflow to deploy backend services to Railway
-│
-├── frontend/ # The Next.js Web Application
-│ ├── pages/ # Main app pages (dashboard, simulation, profile)
-│ ├── components/ # Reusable React components (charts, buttons, modals)
-│ ├── app/ # (If using Next.js 13+ App Router)
-│ ├── public/ # Static assets (images, icons)
-│ ├── styles/ # Global CSS, TailwindCSS config
-│ ├── lib/ # Helper functions, API service hooks
-│ ├── package.json # Frontend dependencies
-│ └── next.config.js # Next.js configuration
-│
-├── backend/ # All Backend Microservices
-│ ├── services/
-│ │ ├── auth_service/ # Authentication microservice
-│ │ │ ├── app/ # FastAPI application for this service
-│ │ │ ├── Dockerfile # Containerizes this service
-│ │ │ └── requirements.txt
-│ │ │
-│ │ ├── profile_service/ # Handles user profiles and surveys
-│ │ │ ├── app/
-│ │ │ ├── Dockerfile
-│ │ │ └── requirements.txt
-│ │ │
-
 ## Project File Structure
 
 ```
