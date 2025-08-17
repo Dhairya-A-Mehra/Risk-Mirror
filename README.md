@@ -62,6 +62,40 @@ Risk-Mirror/
 └── .gitignore
 ```
 
+## Front-end File Structure
+
+The front-end file structure is organized as follows:
+
+```
+/frontend/
+├── app/
+│   ├── (auth)/                # Group for auth-related pages
+│   │   ├── login/
+│   │   │   └── page.tsx       # The Login page component
+│   │   └── signup/
+│   │       └── page.tsx       # The Sign Up page component
+│   │
+│   ├── (main)/                # Group for main, protected app pages
+│   │   ├── dashboard/
+│   │   │   └── page.tsx       # The main Dashboard page
+│   │   ├── profile/
+│   │   │   └── page.tsx       # The User Profile page
+│   │   ├── simulation/
+│   │   │   └── page.tsx       # The Risk Simulation Game page
+│   │   └── survey/
+│   │       └── page.tsx       # The Onboarding Survey page
+│   │
+│   ├── components/            # You should CREATE THIS FOLDER here
+│   │   ├── ui/                # For generic UI elements (buttons, modals)
+│   │   ├── auth/              # Auth-specific components
+│   │   └── dashboard/         # Components used only on the dashboard
+│   │
+│   ├── layout.tsx             # The ROOT layout for your entire app
+│   └── page.tsx               # The component for your landing page (www.yourapp.com/)
+│
+└── ... (other Next.js files)
+```
+
 - **backend/**: All backend microservices and data processing logic
 - **frontend/**: Next.js web application (React, TypeScript)
 - **docker-compose.yml**: For running all services locally during development
