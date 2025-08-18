@@ -1,28 +1,38 @@
 version: "3.8"
 
+# This is the final, definitive version.
+# It moves the DNS configuration from the network level to the service level,
+# which resolves both the VS Code linter error and the container's runtime DNS issue.
+
 services:
   # --- Application Services ---
   auth_service:
     build: ./backend/services/auth_service
+    env_file:
+      - .env
     ports:
       - "8001:80"
     volumes:
       - ./backend/services/auth_service/app:/code/app
-    depends_on:
-      - postgres
-    environment:
-      - DATABASE_URL=postgresql://user:password@postgres:5432/db
+    networks:
+      - aura_net
+    dns: # <-- DNS is now defined here, per service
+      - 8.8.8.8
+      - 1.1.1.1
 
   profile_service:
     build: ./backend/services/profile_service
+    env_file:
+      - .env
     ports:
       - "8002:80"
     volumes:
       - ./backend/services/profile_service/app:/code/app
-    depends_on:
-      - postgres
-    environment:
-      - DATABASE_URL=postgresql://user:password@postgres:5432/db
+    networks:
+      - aura_net
+    dns: # <-- DNS is now defined here, per service
+      - 8.8.8.8
+      - 1.1.1.1
 
   simulation_service:
     build: ./backend/services/simulation_service
@@ -30,19 +40,29 @@ services:
       - "8003:80"
     volumes:
       - ./backend/services/simulation_service/app:/code/app
+    networks:
+      - aura_net
+    dns: # <-- DNS is now defined here, per service
+      - 8.8.8.8
+      - 1.1.1.1
 
   ai_service:
     build: ./backend/services/ai_service
+    env_file:
+      - .env
     ports:
       - "8004:80"
     volumes:
       - ./backend/services/ai_service/app:/code/app
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    networks:
+      - aura_net
+    dns: # <-- DNS is now defined here, per service
+      - 8.8.8.8
+      - 1.1.1.1
 
   # --- Data Processing Service ---
   data_processor:
-    build: ./backend/data_processor # <<< CORRECTED PATH
+    build: ./backend/data_processor
     ports:
       - "8005:80"
     volumes:
@@ -51,37 +71,35 @@ services:
       - kafka
     environment:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+    networks:
+      - aura_net
+    dns: # <-- DNS is now defined here, per service
+      - 8.8.8.8
+      - 1.1.1.1
 
-  # --- Infrastructure Services ---
-  postgres:
-    image: postgres:15
-    environment:
-      - POSTGRES_DB=db
-      - POSTG-RES_USER=user
-      - POSTGRES_PASSWORD=password
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
+  # --- Infrastructure Services (Local) ---
   redis:
     image: redis:7
     ports:
       - "6379:6379"
+    networks:
+      - aura_net
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.0.1
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - aura_net
 
   kafka:
     image: confluentinc/cp-kafka:7.0.1
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092" # Port for other services
-      - "29092:29092" # Port for local machine access if needed
+      - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
@@ -89,6 +107,11 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - aura_net
 
-volumes:
-  postgres_data:
+# Defines our custom network
+networks:
+  aura_net:
+    driver: bridge
+    enable_ipv6: false # This is still important to prevent IPv6 issues
