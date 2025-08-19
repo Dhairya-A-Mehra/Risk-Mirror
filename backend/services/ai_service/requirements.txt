@@ -1,6 +1,0 @@
-fastapi
-uvicorn[standard]
-langchain
-langgraph
-openai # or google-generativeai
-# Add other AI dependencies as needed, e.g., langchain-community
