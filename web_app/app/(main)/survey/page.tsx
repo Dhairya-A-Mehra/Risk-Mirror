@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { useMemo, useCallback } from "react";
 import { motion } from 'framer-motion';
 
 const questions = [
@@ -20,13 +21,14 @@ const questions = [
 ];
 
 export default function SurveyPage() {
+  const memoQuestions = useMemo(() => questions, []);
   const [answers, setAnswers] = useState<string[]>(Array(questions.length).fill(""));
   const currentSurvey = 1; // This would be passed as prop or from router
   const totalSurveys = 4;
   const progressPercentage = (currentSurvey / totalSurveys) * 100;
   
   const getAnsweredQuestions = () => {
-    return answers.filter(answer => answer.trim() !== "").length;
+  return answers.filter(answer => answer.trim() !== "").length;
   };
 
   return (
@@ -43,7 +45,7 @@ export default function SurveyPage() {
             Survey Progress
           </h2>
           <p className="text-gray-300 text-sm">
-            Survey {currentSurvey} of {totalSurveys} • {getAnsweredQuestions()} of {questions.length} questions completed
+            Survey {currentSurvey} of {totalSurveys} • {getAnsweredQuestions()} of {memoQuestions.length} questions completed
           </p>
         </div>
         

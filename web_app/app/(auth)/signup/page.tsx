@@ -1,7 +1,7 @@
 // app/(auth)/signup/page.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { motion } from 'framer-motion';
 import { useAuth } from '../../../context/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -12,34 +12,30 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
   const { signup } = useAuth();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (form.password !== form.confirmPassword) {
       alert("Passwords don't match!");
       return;
     }
-    
     setIsLoading(true);
     const formData = new URLSearchParams();
     formData.append('name', form.name);
     formData.append('email', form.email);
     formData.append('password', form.password);
-    
     try {
       await signup(formData);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [form, signup]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white flex relative overflow-hidden">
-      {/* Animated Background Elements */}
+      {/* Optimized Animated Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        {/* Smooth gradient overlay */}
+        {/* Reduced overlays for performance */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-950/80 via-teal-900/60 to-cyan-950/80"></div>
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-800/20 to-teal-800/30"></div>
       </div>
 
       {/* Left Side - Illustration/Visual (2/3) */}

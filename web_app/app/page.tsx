@@ -51,11 +51,11 @@ export default function LandingPage() {
               left: `${Math.random() * 100}%`,
               top: `-${Math.random() * 30}%`,
             }}
-            animate={{
-              y: [0, window.innerHeight + 150],
-              opacity: [0, 1, 0.7, 0],
-              scaleY: [0.3, 1, 1, 0.3],
-            }}
+              animate={{
+                y: [0, typeof window !== 'undefined' ? window.innerHeight + 150 : 1000],
+                opacity: [0, 1, 0.7, 0],
+                scaleY: [0.3, 1, 1, 0.3],
+              }}
             transition={{
               duration: 1.5 + Math.random() * 2.5,
               repeat: Infinity,
