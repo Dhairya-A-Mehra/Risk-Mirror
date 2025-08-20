@@ -1,146 +1,64 @@
-"use client";
-import { useState, useMemo } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+// web_app/app/dashboard/page.tsx
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { DashboardClient } from '@/components/dashboard/DashboardClient';
+import { DashboardData } from '@/models/dashboard';
+import { Navbar } from '@/components/layout/Navbar';
 
-const features = [
-	{ title: "Risk Analysis", description: "Get detailed risk insights." },
-	{ title: "Survey Management", description: "Manage and review surveys." },
-	{ title: "User Analytics", description: "Track user activity and stats." },
-];
+// This function fetches data on the server before the page is rendered.
+async function getDashboardData(): Promise<DashboardData | null> {
+  try {
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get('sessionToken')?.value;
 
-export default function DashboardPage() {
-	const [recentActivity] = useState([
-		"User John completed a survey.",
-		"Risk score updated for Jane.",
-		"New survey created.",
-	]);
+    // If there's no token, we can immediately say they're not authenticated.
+    if (!sessionToken) {
+      return null;
+    }
 
-	const stats = useMemo(
-		() => [
-			{ label: "Total Users", value: 128 },
-			{ label: "Surveys", value: 34 },
-			{ label: "Avg. Risk Score", value: 72 },
-		],
-		[]
-	);
+    // Ensure we use the full URL for server-side fetch
+    const apiUrl = `${process.env.NEXTAUTH_URL}/api/dashboard`;
 
-					return (
-						<main className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white p-8">
-							{/* Header Section */}
-							<div className="mb-10 flex items-center justify-between">
-								<h1 className="text-4xl font-bold text-white">Dashboard</h1>
-								<Button className="bg-blue-700 text-white hover:bg-blue-800 px-6 py-2 rounded-lg shadow font-semibold">New Survey</Button>
-							</div>
+    const response = await fetch(apiUrl, {
+      headers: {
+        Cookie: `sessionToken=${sessionToken}`,
+      },
+      cache: 'no-store',
+    });
 
-							{/* Stats Cards */}
-							<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-								{stats.map((stat) => (
-									<Card key={stat.label} className="shadow-lg border border-blue-200 bg-white rounded-lg">
-										<CardContent className="p-6 flex flex-col items-center">
-											<div className="text-lg font-semibold text-blue-700 mb-2">{stat.label}</div>
-											<div className="text-3xl font-bold text-blue-900">{stat.value}</div>
-										</CardContent>
-									</Card>
-								))}
-							</div>
+    if (!response.ok) {
+      // If the API returns an error (like 401 Unauthorized), it's not a server crash,
+      // it just means the session is invalid.
+      console.log(`Failed to fetch dashboard data, status: ${response.status}`);
+      return null;
+    }
 
-							{/* Main Content: Recent Activity & Features */}
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-								{/* Recent Activity */}
-								<Card className="shadow-md border border-blue-200 bg-white rounded-lg">
-									<CardContent className="p-6">
-										<h2 className="text-xl font-bold mb-4 text-blue-800">Recent Activity</h2>
-										<ul className="space-y-2">
-											{recentActivity.map((item, idx) => (
-												<li key={idx} className="text-blue-700 text-base">{item}</li>
-											))}
-										</ul>
-									</CardContent>
-								</Card>
+    return response.json();
+  } catch (error) {
+    console.error('An error occurred while fetching dashboard data:', error);
+    // A catch block here indicates a more serious problem, like the API server being down.
+    return null;
+  }
+}
 
-								{/* Features List */}
-								<Card className="shadow-md border border-blue-200 bg-white rounded-lg">
-									<CardContent className="p-6">
-										<h2 className="text-xl font-bold mb-4 text-blue-800">Features</h2>
-										<ul className="space-y-2">
-											{features.map((feature) => (
-												<li key={feature.title}>
-													<div className="font-semibold text-blue-700 text-base">{feature.title}</div>
-													<div className="text-blue-600 text-sm">{feature.description}</div>
-												</li>
-											))}
-										</ul>
-									</CardContent>
-								</Card>
-							</div>
+export default async function DashboardPage() {
+  const dashboardData = await getDashboardData();
 
-							{/* Quick Actions */}
-							<div className="mt-10 flex gap-6">
-								<Button className="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2 rounded-lg shadow font-semibold">View Reports</Button>
-								<Button variant="outline" className="border border-blue-600 text-blue-700 hover:bg-blue-50 px-6 py-2 rounded-lg font-semibold">Manage Users</Button>
-								<Button variant="outline" className="border border-blue-600 text-blue-700 hover:bg-blue-50 px-6 py-2 rounded-lg font-semibold">Settings</Button>
-							</div>
-						</main>
-					);
-	// ...existing code...
+  // --- THE MAIN FIX ---
+  // If we don't have data, we redirect.
+  // This must be done *before* any attempt to render components that need the data.
+  if (!dashboardData) {
+    redirect('/login');
+  }
 
-			return (
-				<main className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 p-6">
-					{/* Header Section */}
-					<div className="mb-8 flex items-center justify-between">
-						<h1 className="text-3xl font-bold text-blue-900">Dashboard</h1>
-						<Button>New Survey</Button>
-					</div>
-
-					{/* Stats Cards */}
-					<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-						{stats.map((stat) => (
-							<Card key={stat.label}>
-								<CardContent>
-									<div className="text-lg font-semibold text-blue-700">{stat.label}</div>
-									<div className="text-2xl font-bold text-blue-900">{stat.value}</div>
-								</CardContent>
-							</Card>
-						))}
-					</div>
-
-					{/* Main Content: Recent Activity & Features */}
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-						{/* Recent Activity */}
-						<Card>
-							<CardContent>
-								<h2 className="text-xl font-bold mb-4 text-blue-800">Recent Activity</h2>
-								<ul className="space-y-2">
-									{recentActivity.map((item, idx) => (
-										<li key={idx} className="text-blue-700">{item}</li>
-									))}
-								</ul>
-							</CardContent>
-						</Card>
-
-						{/* Features List */}
-						<Card>
-							<CardContent>
-								<h2 className="text-xl font-bold mb-4 text-blue-800">Features</h2>
-								<ul className="space-y-2">
-									{features.map((feature) => (
-										<li key={feature.title}>
-											<div className="font-semibold text-blue-700">{feature.title}</div>
-											<div className="text-blue-600 text-sm">{feature.description}</div>
-										</li>
-									))}
-								</ul>
-							</CardContent>
-						</Card>
-					</div>
-
-					{/* Quick Actions */}
-					<div className="mt-8 flex gap-4">
-						<Button>View Reports</Button>
-						<Button variant="outline">Manage Users</Button>
-						<Button variant="outline">Settings</Button>
-					</div>
-				</main>
-			);
-		}
+  // If we've reached this point, we can be 100% certain that dashboardData is NOT null.
+  // The component can now render safely.
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <Navbar user={dashboardData.user} />
+      <main className="p-4 sm:p-6 lg:p-8">
+        <DashboardClient initialData={dashboardData} />
+      </main>
+    </div>
+  );
+}

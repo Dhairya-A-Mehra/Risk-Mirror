@@ -1,30 +1,56 @@
+// web_app/models/user.ts
 import { ObjectId } from 'mongodb';
+
+// --- Embedded Sub-documents ---
 
 export interface Profile {
   avatar: string;
   persona: string;
 }
+
 export interface Streak {
   current: number;
   longest: number;
 }
+
 export interface Gamification {
   badges: string[];
   leaderboardScore: number;
   streak: Streak;
 }
+
+export interface GoogleIntegration {
+  linked: boolean;
+  accessToken?: string;
+  refreshToken?: string;
+  expiryDate?: Date;
+}
+
+export interface Integrations {
+  google: GoogleIntegration;
+  fitbitLinked: boolean;
+  axioLinked: boolean;
+}
+
+export interface Interdependency {
+  sourceRisk: 'financial' | 'health' | 'behavioral';
+  targetRisk: 'financial' | 'health' | 'behavioral';
+  impact: number;
+  reason: string;
+}
+
 export interface DynamicRiskDNA {
   lastCalculated: Date;
   overallScore: number;
   financialScore: number;
   healthScore: number;
   behavioralScore: number;
+  interdependencies: Interdependency[];
+  keyBehavioralSignals: string[];
 }
-export interface Integrations {
-  googleCalendarLinked: boolean;
-  fitbitLinked: boolean;
-  axioLinked: boolean;
-}
+
+// --- Main User Model ---
+
 export interface User {
   _id?: ObjectId;
   email: string;
@@ -36,4 +62,16 @@ export interface User {
   gamification: Gamification;
   dynamicRiskDNA: DynamicRiskDNA;
   integrations: Integrations;
+}
+
+export interface DynamicRiskDNA {
+  lastCalculated: Date;
+  overallScore: number;
+  financialScore: number;
+  healthScore: number;
+  behavioralScore: number;
+  // Feature 14: Financial Calm Index
+  financialCalmIndex: number; // A score combining financial volatility and user stress
+  interdependencies: Interdependency[];
+  keyBehavioralSignals: string[];
 }

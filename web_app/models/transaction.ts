@@ -1,3 +1,4 @@
+// web_app/models/transaction.ts
 import { ObjectId } from 'mongodb';
 
 export interface Transaction {
@@ -10,5 +11,6 @@ export interface Transaction {
   vendor: string;
   transactionDate: Date;
   source: string;
-  isAnomaly: boolean;
+  // Feature 10: Fraud Detection
+  fraudScore?: number; // A score from 0.0 to 1.0, calculated by a Kafka consumer
 }

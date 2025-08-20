@@ -1,24 +1,19 @@
+// web_app/models/plan.ts
 import { ObjectId } from 'mongodb';
 
-export interface Goal {
-  goalId: ObjectId;
+export interface MonthlyGoal {
+  month: 1 | 2 | 3;
   description: string;
-  targetAmount: number;
-  currentAmount: number;
+  target: string;
   status: 'on-track' | 'at-risk' | 'completed';
 }
-export interface WeeklyTask {
-  week: number;
-  task: string;
-  completed: boolean;
-}
+
 export interface Plan {
   _id?: ObjectId;
   userId: ObjectId;
-  planType: string;
-  status: 'in-progress' | 'completed' | 'archived';
+  planTitle: string;
+  status: 'active' | 'completed';
   startDate: Date;
   endDate: Date;
-  goals: Goal[];
-  weeklyTasks: WeeklyTask[];
+  monthlyGoals: MonthlyGoal[];
 }
