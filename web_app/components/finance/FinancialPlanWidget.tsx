@@ -27,25 +27,24 @@ export function FinancialPlanWidget({ plan }: { plan: Plan | null }) {
   };
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle>{currentPlan.planTitle}</CardTitle>
-        <CardDescription>Your personalized roadmap to achieve your financial goals.</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Card className="bg-gray-800/80 backdrop-blur-lg border border-blue-400/30 rounded-2xl shadow-2xl transition-all duration-300 h-full">
+      <CardContent className="p-6 text-center h-full flex flex-col">
+        <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 flex items-center justify-center text-white font-bold text-lg shadow-lg">💡</div>
+        <h3 className="text-xl font-bold mb-3 text-white">{currentPlan.planTitle}</h3>
+        <p className="text-gray-300 flex-grow leading-relaxed text-sm mb-4">Your personalized roadmap to achieve your financial goals.</p>
         <ul className="space-y-4">
           {currentPlan.monthlyGoals.map((goal, i) => (
-            <li key={i} className="flex items-center space-x-4">
+            <li key={i} className="flex items-center space-x-4 text-left">
               <div className="flex-shrink-0">{getStatusIcon(goal.status as any)}</div>
               <div>
-                <p className="font-medium text-slate-800 dark:text-slate-200">Month {goal.month}: {goal.description}</p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Target: {goal.target}</p>
+                <div className="font-semibold text-white text-base mb-1">Month {goal.month}: {goal.description}</div>
+                <div className="text-sm text-cyan-300 leading-relaxed">Target: {goal.target}</div>
               </div>
             </li>
           ))}
         </ul>
         {!plan && (
-            <Button variant="outline" className="mt-4 w-full">Create a New Plan</Button>
+            <Button variant="outline" className="mt-4 w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white">Create a New Plan</Button>
         )}
       </CardContent>
     </Card>

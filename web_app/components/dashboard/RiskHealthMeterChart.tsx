@@ -1,26 +1,21 @@
 // web_app/components/dashboard/RiskHealthMeterChart.tsx
 "use client";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { motion } from "framer-motion";
+import { Card, CardContent } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { RiskHistory } from "@/models/riskHistory";
 
-// This component expects a prop 'data' which is an array of risk history objects
-interface ChartProps { 
+interface ChartProps {
   data: Pick<RiskHistory, 'snapshotDate' | 'riskScores'>[] | undefined;
 }
 
 export function RiskHealthMeterChart({ data }: ChartProps) {
-  // Add a defensive check for undefined or empty data
   if (!data || data.length === 0) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Risk Health Meter</CardTitle>
-          <CardDescription>Your overall risk score over the last 30 days.</CardDescription>
-        </CardHeader>
-        <CardContent className="h-80 w-full flex items-center justify-center">
-          <p className="text-slate-500">No historical data available to display chart.</p>
+      <Card className="bg-gray-800/80 backdrop-blur-lg border border-blue-400/30 rounded-2xl shadow-2xl h-full">
+        <CardContent className="p-6 text-center h-full flex flex-col items-center justify-center">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">📈</div>
+          <h3 className="text-xl font-bold mb-3 text-white">Risk Health Meter</h3>
+          <p className="text-gray-300 flex-grow leading-relaxed text-sm mb-4">No historical data available to display chart.</p>
         </CardContent>
       </Card>
     );
@@ -32,30 +27,23 @@ export function RiskHealthMeterChart({ data }: ChartProps) {
   }));
 
   return (
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Risk Health Meter</CardTitle>
-          <CardDescription>Your overall risk score over the last 30 days.</CardDescription>
-        </CardHeader>
-        <CardContent className="h-80 w-full pt-4">
-          <ResponsiveContainer>
-            <LineChart data={formattedData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-              <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} domain={[0, 100]} tickLine={false} axisLine={false} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: 'hsl(var(--card))',
-                  borderColor: 'hsl(var(--border))',
-                  borderRadius: '0.5rem',
-                }}
-              />
-              <Line type="monotone" dataKey="Overall" stroke="hsl(var(--primary))" strokeWidth={2} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+    <Card className="bg-gray-800/80 backdrop-blur-lg border border-blue-400/30 rounded-2xl shadow-2xl h-full">
+      <CardContent className="p-6 text-center h-full flex flex-col items-center justify-center">
+        <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 flex items-center justify-center text-white font-bold text-lg shadow-lg">📈</div>
+        <h3 className="text-xl font-bold mb-3 text-white">Risk Health Meter</h3>
+        <div className="h-80 w-full">
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={formattedData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+              <XAxis dataKey="date" stroke="#94a3b8" />
+              <YAxis stroke="#94a3b8" />
+              <Tooltip wrapperClassName="!bg-white !text-black !rounded-lg !shadow-lg" />
+              <Line type="monotone" dataKey="Overall" stroke="#06b6d4" strokeWidth={3} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
-        </CardContent>
-      </Card>
-    </motion.div>
+        </div>
+        <p className="text-gray-300 flex-grow leading-relaxed text-sm mt-2">Your overall risk score over the last 30 days.</p>
+      </CardContent>
+    </Card>
   );
 }

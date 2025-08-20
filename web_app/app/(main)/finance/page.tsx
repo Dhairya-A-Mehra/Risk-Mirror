@@ -57,10 +57,9 @@ export default async function FinancePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      {/* The Navbar now receives the correctly typed, real user data */}
+    <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white flex flex-col">
       <Navbar user={userDataForNavbar} />
-      <main className="container mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="p-4 sm:p-6 lg:p-8 flex-1 flex flex-col items-center justify-start">
         <FinancePageClient initialData={financeData} />
       </main>
     </div>

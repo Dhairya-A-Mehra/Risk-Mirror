@@ -41,55 +41,6 @@ export default function LandingPage() {
           />
         ))}
 
-        {/* Rain Droplets - Intense Cloudburst */}
-        {Array.from({ length: 120 }).map((_, i) => (
-          <motion.div
-            key={`rain-${i}`}
-            className="absolute w-0.5 bg-gradient-to-b from-cyan-300/70 to-blue-400/50 rounded-full"
-            style={{
-              height: `${15 + Math.random() * 50}px`,
-              left: `${Math.random() * 100}%`,
-              top: `-${Math.random() * 30}%`,
-            }}
-              animate={{
-                y: [0, typeof window !== 'undefined' ? window.innerHeight + 150 : 1000],
-                opacity: [0, 1, 0.7, 0],
-                scaleY: [0.3, 1, 1, 0.3],
-              }}
-            transition={{
-              duration: 1.5 + Math.random() * 2.5,
-              repeat: Infinity,
-              ease: "easeIn",
-              delay: Math.random() * 6,
-              repeatDelay: Math.random() * 2,
-            }}
-          />
-        ))}
-
-        {/* Storm Energy Particles */}
-        {Array.from({ length: 60 }).map((_, i) => (
-          <motion.div
-            key={`storm-particle-${i}`}
-            className="absolute w-1.5 h-1.5 bg-gradient-to-r from-blue-300/60 to-teal-300/60 rounded-full blur-sm"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 70}%`,
-            }}
-            animate={{
-              y: [0, Math.random() * 300 + 150],
-              x: [0, Math.random() * 120 - 60],
-              scale: [0, 2, 0],
-              opacity: [0, 0.9, 0],
-            }}
-            transition={{
-              duration: 6 + Math.random() * 8,
-              repeat: Infinity,
-              ease: "easeOut",
-              delay: Math.random() * 12,
-            }}
-          />
-        ))}
-
         {/* Thunder Ripples */}
         {Array.from({ length: 6 }).map((_, i) => (
           <motion.div
