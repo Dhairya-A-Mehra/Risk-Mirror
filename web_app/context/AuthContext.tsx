@@ -1,62 +1,54 @@
+// web_app/context/AuthContext.tsx
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
-import api from '../lib/api';
+import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { User } from '@/models/user';
 
 interface AuthContextType {
-  token: string | null;
-  login: (formData: any) => Promise<void>;
-  signup: (formData: any) => Promise<void>;
+  user: User | null;
+  isLoading: boolean;
+  login: (userData: User) => void;
   logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [token, setToken] = useState<string | null>(null);
-  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('aura_token');
-    if (storedToken) {
-      setToken(storedToken);
-    }
+    // Check if the user is already logged in when the app loads
+    const checkUserSession = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        setUser(null);
+        console.error('Session check failed', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkUserSession();
   }, []);
 
-  const login = async (formData: any) => {
-    try {
-      const res = await api.post('/login', formData, {
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      });
-      const { access_token } = res.data;
-      setToken(access_token);
-      localStorage.setItem('aura_token', access_token);
-      router.push('/dashboard');
-    } catch (error) {
-      console.error("Login failed:", error);
-      // Handle login error (e.g., show a toast notification)
-    }
+  const login = (userData: User) => {
+    setUser(userData);
   };
 
-  const signup = async (formData: any) => {
-    try {
-      await api.post('/signup', formData);
-      // After signup, redirect to login to get a token
-      router.push('/login');
-    } catch (error) {
-      console.error("Signup failed:", error);
-    }
-  };
-
-  const logout = () => {
-    setToken(null);
-    localStorage.removeItem('aura_token');
-    router.push('/login');
+  const logout = async () => {
+    await fetch('/api/auth/signout', { method: 'POST' });
+    setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
