@@ -75,3 +75,4 @@ export interface DynamicRiskDNA {
   interdependencies: Interdependency[];
   keyBehavioralSignals: string[];
 }
+
