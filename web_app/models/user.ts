@@ -26,6 +26,18 @@ export interface GoogleIntegration {
   expiryDate?: Date;
 }
 
+export interface Profile {
+  avatar: string; // For the custom avatar
+  persona: string; // For persona types (heavy investor, etc.)
+}
+
+export interface Gamification {
+  badges: string[];
+  leaderboardScore: number;
+  streak: { current: number; longest: number; };
+}
+
+
 export interface Integrations {
   google: GoogleIntegration;
   fitbitLinked: boolean;
