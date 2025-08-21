@@ -11,7 +11,9 @@ import { MedicalExpenseWidget } from './MedicalExpenseWidget';
 import { NearbyHospitalsMap } from './NearbyHospitalsMap';
 import { FinancialPlanWidget } from '@/components/finance/FinancialPlanWidget';
 import { InsightsWidget } from '@/components/dashboard/InsightsWidget';
-import { APIProvider } from '@react-google-maps/api'; // Let's use the better library we decided on earlier
+
+// --- THE FIX: Import LoadScript from the correct library ---
+import { LoadScript } from '@react-google-maps/api';
 
 export function HealthPageClient({ initialData }: { initialData: HealthPageData }) {
   const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "";
@@ -88,11 +90,11 @@ export function HealthPageClient({ initialData }: { initialData: HealthPageData 
       </div>
 
       {/* --- THE FIX for the map --- */}
-      {/* We use APIProvider from @vis.gl/react-google-maps, which is a cleaner and more modern library */}
-      {/* It acts as the context provider for any map components inside it. */}
-      <APIProvider apiKey={GOOGLE_MAPS_API_KEY}>
+      {/* We wrap the map component with LoadScript, which is the correct pattern */}
+      {/* for the @react-google-maps/api library. */}
+      <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
           <NearbyHospitalsMap city={initialData.userCity} />
-      </APIProvider>
+      </LoadScript>
     </div>
   );
 }

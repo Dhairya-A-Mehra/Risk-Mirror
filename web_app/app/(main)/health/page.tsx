@@ -45,7 +45,7 @@ async function getUserForNavbar(sessionToken: string): Promise<NavbarUser | null
 export default async function HealthPage() {
   // --- THE FIX ---
   // 1. Get the session token synchronously first.
-  const sessionToken = cookies().get('sessionToken')?.value;
+  const sessionToken = (await cookies()).get('sessionToken')?.value;
 
   // 2. If no token, redirect immediately.
   if (!sessionToken) {
