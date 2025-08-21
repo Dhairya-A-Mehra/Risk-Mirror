@@ -70,10 +70,23 @@ export interface User {
   fullName: string;
   createdAt: Date;
   updatedAt: Date;
-  profile: Profile;
   gamification: Gamification;
   dynamicRiskDNA: DynamicRiskDNA;
   integrations: Integrations;
+  profile: {
+    avatar: string;
+    persona: string;
+    // We add location for the map feature
+    location?: {
+      city: string;
+      country: string;
+      // You could also store lat/lon for more precise lookups
+    };
+  };
+  medicalExpenseForecast?: {
+    predictedAnnualCost: number;
+    lastCalculated: Date;
+  };
 }
 
 export interface DynamicRiskDNA {
