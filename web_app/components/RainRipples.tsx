@@ -1,4 +1,3 @@
-// web_app/components/RainRipples.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 
@@ -16,7 +15,7 @@ export default function RainRipples() {
       const id = Date.now();
       const x = Math.random() * window.innerWidth;
       const y = Math.random() * window.innerHeight;
-      setRipples((prev) => [...prev, { id, x, y }].slice(-20)); // keep last 20 ripples
+      setRipples((prev) => [...prev, { id, x, y }].slice(-20)); 
     }, 600);
     return () => clearInterval(interval);
   }, []);
