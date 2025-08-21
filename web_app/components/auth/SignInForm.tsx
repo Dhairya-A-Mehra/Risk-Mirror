@@ -1,4 +1,4 @@
-// web_app/components/auth/SignInForm.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -28,7 +28,7 @@ const formSchema = z.object({
 
 export function SignInForm() {
   const router = useRouter();
-  const { login } = useAuth(); // Get the login function from our AuthContext
+  const { login } = useAuth(); 
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -39,7 +39,7 @@ export function SignInForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      // 1. Call the signin API
+      
       const response = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -51,18 +51,16 @@ export function SignInForm() {
         throw new Error(data.message || 'Something went wrong');
       }
 
-      // 2. Fetch user data to populate the context
       const userResponse = await fetch('/api/auth/me');
       if (!userResponse.ok) {
         throw new Error('Failed to fetch user data after sign-in.');
       }
       const userData = await userResponse.json();
       
-      // 3. Update the global AuthContext
       login(userData);
       
       toast.success('Signed in successfully!');
-      router.push('/dashboard'); // Redirect to the dashboard
+      router.push('/dashboard');
 
     } catch (error: any) {
       toast.error(error.message);
