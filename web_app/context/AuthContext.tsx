@@ -1,4 +1,3 @@
-// web_app/context/AuthContext.tsx
 "use client";
 
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
@@ -18,7 +17,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Check if the user is already logged in when the app loads
     const checkUserSession = async () => {
       try {
         const response = await fetch('/api/auth/me');
