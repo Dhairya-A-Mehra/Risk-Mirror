@@ -3,25 +3,18 @@ from dotenv import load_dotenv
 from langchain_groq import ChatGroq
 from langchain.prompts import PromptTemplate
 
-# --- 1. SETUP ---
-# Load environment variables from your .env file
 load_dotenv()
 
-# Get Groq API key and model settings from environment variables
 groq_api_key = os.getenv("GROQ_API_KEY")
 model_name = os.getenv("MODEL", "llama3-8b-8192")
-temperature = float(os.getenv("TEMPERATURE", 0.5)) # A moderate temp for creative and practical suggestions
+temperature = float(os.getenv("TEMPERATURE", 0.5)) 
 
-# Initialize the Groq Chat LLM
 llm = ChatGroq(
     model=model_name,
     temperature=temperature,
     groq_api_key=groq_api_key
 )
 
-# --- 2. MOCK USER LIFESTYLE DATA ---
-# This data simulates a busy user who has set goals but whose calendar
-# is filled with work, leaving little time for personal growth or social activities.
 mock_user_lifestyle_data = {
     "user_id": "user-xyz-987",
     "long_term_goals": [
@@ -31,7 +24,7 @@ mock_user_lifestyle_data = {
     ],
     "calendar_summary_this_week": {
         "work_meetings": 15,
-        "personal_appointments": 1, # (Dentist)
+        "personal_appointments": 1, 
         "social_events": 0,
         "dedicated_learning_time": 0
     },
@@ -39,9 +32,6 @@ mock_user_lifestyle_data = {
 }
 
 
-# --- 3. LIFESTYLE AGENT PROMPT ---
-# This prompt establishes the agent as a proactive life coach focused on
-# productivity, goal alignment, and work-life balance.
 lifestyle_prompt = PromptTemplate(
     input_variables=["query", "user_data"],
     template="""
@@ -66,13 +56,8 @@ Answer:
 """,
 )
 
-# --- 4. CREATE THE CHAIN ---
-# This chain links our specialized lifestyle prompt with the LLM.
 lifestyle_chain = lifestyle_prompt | llm
 
-
-# --- 5. DUMMY QUERIES FOR TESTING ---
-# These queries are designed to test the agent's ability to handle goals, scheduling, and social well-being.
 queries = [
     "I feel like I'm not making any progress on my long-term goals. What can I do?",
     "My schedule is packed with work. How can I find time for myself or my friends?",
@@ -81,11 +66,9 @@ queries = [
     "Give me a quick overview of how my current lifestyle aligns with my goals."
 ]
 
-# --- 6. RUN THE AGENT ---
-# This loop will run the agent for each query and print the results.
 print("--- Running Lifestyle Agent Test ---")
 for q in queries:
-    # We invoke the chain, passing both the query and the user's lifestyle data
+    
     result = lifestyle_chain.invoke({
         "query": q,
         "user_data": mock_user_lifestyle_data
