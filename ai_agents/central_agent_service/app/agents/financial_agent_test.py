@@ -20,7 +20,7 @@ mock_user_data = {
     "credit_score": 750,
     "investment_portfolio_value": 52350.75,
     "monthly_spending_average": 2100.50,
-    "debt_to_income_ratio": 0.35, # (35%)
+    "debt_to_income_ratio": 0.35, 
     "active_loans": ["Student Loan"]
 }
 
