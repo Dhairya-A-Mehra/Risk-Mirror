@@ -11,10 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-// Update the import path if your Select component is located elsewhere, for example:
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-// Or, if you actually have the file in a different directory, adjust accordingly.
-// If the file does not exist, create 'select.tsx' in the 'components/ui' directory or install the required UI library.
+
 import { User } from "@/models/user";
 
 const formSchema = z.object({
@@ -53,9 +51,9 @@ export function EditProfileModal({ isOpen, setIsOpen, user, onProfileUpdate }: P
       if (!response.ok) throw new Error(data.message);
       
       toast.success('Profile updated successfully!');
-      onProfileUpdate(values); // Update parent component state instantly
+      onProfileUpdate(values); 
       setIsOpen(false);
-      router.refresh(); // Re-fetches server component data in the background
+      router.refresh(); 
     } catch (error: any) {
       toast.error(error.message);
     } finally {
