@@ -1,7 +1,0 @@
-fastapi
-uvicorn[standard]
-python-dotenv
-gunicorn
-langchain
-langgraph
-langchain-groq
