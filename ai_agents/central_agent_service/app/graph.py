@@ -7,12 +7,10 @@ from langgraph.prebuilt import ToolNode
 from app.agents.financial_agent import create_financial_agent
 from app.tools.data_access_tools import get_user_financial_data_tool
 
-# The GraphState remains the same, but we will use `messages` as the primary input
 class GraphState(TypedDict):
-    # We remove query and user_id as top-level keys, as they'll be in the messages
+
     messages: Annotated[List[BaseMessage], operator.add]
 
-# --- Graph Nodes ---
 
 tools = [get_user_financial_data_tool]
 tool_node = ToolNode(tools)
@@ -22,15 +20,10 @@ def financial_agent_node(state: GraphState):
     print("--- NODE: Running Financial Agent ---")
     agent = create_financial_agent()
     
-    # Pass the entire message history to the agent
-    result = agent.invoke(state) # The whole state is the input now
+    result = agent.invoke(state) 
     
-    # The result is a new message (AIMessage with tool calls or final answer)
-    # We return it to be added to the state
     return {"messages": [result]}
 
-# --- Router Logic ---
-# This logic remains the same and is correct.
 def router(state: GraphState) -> str:
     print("--- ROUTER: Deciding next step ---")
     last_message = state["messages"][-1]
@@ -38,7 +31,6 @@ def router(state: GraphState) -> str:
         return "tools"
     return "end"
 
-# --- Build the Graph ---
 def create_agentic_graph():
     """Compiles the complete agentic graph."""
     workflow = StateGraph(GraphState)
