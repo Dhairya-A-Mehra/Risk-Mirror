@@ -1,4 +1,4 @@
-// web_app/components/dashboard/ExplainabilityModal.tsx
+
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { ExplainabilityLog } from "@/models/explainabilityLog";
@@ -8,7 +8,6 @@ export function ExplainabilityModal({ explanation }: { explanation: Explainabili
     return <Button variant="outline" className="w-full" disabled>Explanation Unavailable</Button>;
   }
 
-  // Sort by the absolute impact of the feature
   const sortedFeatures = explanation.featureImportances.sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
 
   return (
