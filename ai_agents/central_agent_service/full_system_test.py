@@ -9,56 +9,37 @@ from langchain_core.tools import StructuredTool
 from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode
 
-# --- 1. SETUP & CONFIGURATION ---
 print("--- Initializing System ---")
 load_dotenv()
 groq_api_key = os.getenv("GROQ_API_KEY")
 
-# We use two LLM configurations: one for precise routing, one for creative answers
 llm_router = ChatGroq(model="llama3-8b-8192", temperature=0.0, groq_api_key=groq_api_key)
 llm_creative = ChatGroq(model="llama3-8b-8192", temperature=0.3, groq_api_key=groq_api_key)
 
-# --- 2. MOCK TOOLS WITH DUMMY DATA ---
-
-# Financial Tool Function
 def _get_user_financial_data(user_id: str) -> dict:
-    # <<< FIX: Added a descriptive docstring. This is what the AI reads.
-    """
-    Fetches the user's key financial metrics from the database, including credit score, portfolio value, and debt-to-income ratio.
-    """
+    
+    
     print(f"--- TOOL CALLED: Fetching financial data for user_id: {user_id} ---")
     return {"credit_score": 750, "portfolio_value": 52350.75, "debt_to_income_ratio": 0.35}
 
-# Health Tool Function
 def _get_user_health_data(user_id: str) -> dict:
-    # <<< FIX: Added a descriptive docstring. This is what the AI reads.
-    """
-    Fetches the user's key health metrics from health trackers or user input, including average sleep, stress level, and resting heart rate.
-    """
+   
     print(f"--- TOOL CALLED: Fetching health data for user_id: {user_id} ---")
     return {"avg_sleep_hours": 5.5, "reported_stress_level": "high (7/10)", "avg_resting_hr": 78}
 
-# Lifestyle Tool Function
 def _get_user_lifestyle_data(user_id: str) -> dict:
-    # <<< FIX: Added a descriptive docstring. This is what the AI reads.
-    """
-    Fetches the user's key lifestyle data, including their long-term goals and a summary of their weekly schedule and social events.
-    """
+   
     print(f"--- TOOL CALLED: Fetching lifestyle data for user_id: {user_id} ---")
     return {"long_term_goals": ["Learn Python", "Save for a house"], "work_meetings_this_week": 15, "social_events": 0}
 
-# Create StructuredTool objects from the functions
 financial_tool = StructuredTool.from_function(func=_get_user_financial_data, name="get_user_financial_data")
 health_tool = StructuredTool.from_function(func=_get_user_health_data, name="get_user_health_data")
 lifestyle_tool = StructuredTool.from_function(func=_get_user_lifestyle_data, name="get_user_lifestyle_data")
 
-# A list of ALL tools available in the graph
 all_tools = [financial_tool, health_tool, lifestyle_tool]
 
-# --- 3. SPECIALIZED AGENT DEFINITIONS ---
-
 def create_agent(llm, system_prompt: str, tools: list):
-    """A helper function to create a conversational agent."""
+   
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt),
         MessagesPlaceholder(variable_name="messages"),
@@ -81,7 +62,6 @@ lifestyle_agent = create_agent(
     [lifestyle_tool]
 )
 
-# --- 4. LANGGRAPH STATE & NODES ---
 
 class GraphState(TypedDict):
     messages: Annotated[List[BaseMessage], operator.add]
@@ -104,7 +84,6 @@ def lifestyle_agent_node(state: GraphState):
 
 tool_node = ToolNode(all_tools)
 
-# --- 5. THE CENTRAL COORDINATOR (ROUTER) NODE ---
 
 coordinator_prompt = PromptTemplate(
     input_variables=["query"],
@@ -123,8 +102,6 @@ def router_node(state: GraphState):
     routed_to = routing_result.content.strip()
     print(f"--- Coordinator decision: Route to {routed_to} ---")
     return {"next_node": routed_to}
-
-# --- 6. GRAPH EDGES AND COMPILATION ---
 
 def should_continue(state: GraphState):
     if state["messages"][-1].tool_calls:
@@ -151,14 +128,13 @@ workflow.add_conditional_edges("tools", route_to_agent)
 app = workflow.compile()
 print("--- System Initialized. Graph is compiled and ready. ---")
 
-# --- 7. DUMMY QUERIES & EXECUTION LOOP ---
 
 queries = [
     "Based on my data, is my portfolio doing well?",
     "I've been feeling stressed and not sleeping enough, what should I do?",
     "I have too many work meetings. How can I find time for my goal of learning Python?",
     "I'm so worried about money that it's affecting my health. What should I prioritize?",
-    # --- Complex, multi-domain queries ---
+   
     "Given my high debt-to-income ratio and recent high stress levels, what should I focus on to improve both my financial and health situation?",
     "If I want to buy a house in 2 years but my sleep is poor and my portfolio is volatile, what steps should I take?",
     "How can I balance my goal of learning Python, improving my credit score, and reducing my stress from work meetings?",
