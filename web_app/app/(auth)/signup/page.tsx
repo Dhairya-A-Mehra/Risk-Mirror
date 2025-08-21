@@ -1,17 +1,17 @@
-// web_app/app/signup/page.tsx
+
 import { SignUpForm } from "@/components/auth/SignUpForm";
 import Link from "next/link";
 
 export default function SignUpPage() {
   return (
   <div className="min-h-screen w-full flex bg-gradient-to-br from-blue-900 via-teal-900 to-cyan-900 relative overflow-hidden">
-      {/* Left 2/3 animated branding section with layered gradients */}
+      
       <div className="hidden md:flex w-2/3 items-center justify-center relative overflow-hidden">
-        {/* Static gradient background restored */}
+        
         <div className="absolute inset-0 bg-gradient-to-br from-blue-950/80 via-teal-900/60 to-cyan-950/80"></div>
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-800/20 to-teal-800/30"></div>
         <div className="absolute inset-0 bg-gradient-to-bl from-cyan-900/40 via-transparent to-blue-900/50"></div>
-        {/* Visible circle ripples animation */}
+        
   <div className="absolute inset-0 bg-gradient-to-br from-blue-950/80 via-teal-900/60 to-cyan-950/80 animate-pulse"></div>
   <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-800/20 to-teal-800/30 animate-[pulse_8s_ease-in-out_infinite]"></div>
   <div className="absolute inset-0 bg-gradient-to-bl from-cyan-900/40 via-transparent to-blue-900/50 animate-[pulse_12s_ease-in-out_infinite]"></div>
@@ -20,7 +20,7 @@ export default function SignUpPage() {
           <p className="text-lg text-white/80 text-center max-w-xs">Sign up to access powerful financial tools, insights, and a supportive community.</p>
         </div>
       </div>
-      {/* Right 1/3 form section */}
+      
       <div className="flex w-full md:w-1/3 h-screen items-center justify-center">
   <div className="w-full h-full p-12 space-y-8 shadow-2xl bg-black/40 border border-neutral-800 backdrop-blur-md flex flex-col justify-center">
           <div className="text-center">

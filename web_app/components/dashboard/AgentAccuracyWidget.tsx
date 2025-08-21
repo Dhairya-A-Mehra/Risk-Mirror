@@ -1,8 +1,7 @@
-// web_app/components/dashboard/AgentAccuracyWidget.tsx
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-// Define a more specific interface for this component's props
 interface AccuracyProps {
   accuracy?: {
     financial: { total: number; correct: number; accuracy: number };
@@ -11,7 +10,6 @@ interface AccuracyProps {
 }
 
 export function AgentAccuracyWidget({ accuracy }: AccuracyProps) {
-  // Provide default values to prevent crashes if accuracy data is missing
   const financialAccuracy = accuracy?.financial?.accuracy ?? 0;
   const healthAccuracy = accuracy?.health?.accuracy ?? 0;
 

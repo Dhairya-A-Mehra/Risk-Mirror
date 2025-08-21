@@ -1,4 +1,4 @@
-// web_app/app/api/health/plan/route.ts
+
 
 import { NextResponse, NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
@@ -16,14 +16,12 @@ export async function GET(request: NextRequest) {
   try {
     const { db } = await connectToDatabase();
 
-    // Fetch the active plan that is specifically in the 'health' category
     const activeHealthPlan = await db.collection<Plan>('plans').findOne({
       userId,
       status: 'active',
       category: 'health'
     });
     
-    // It's okay if a plan is not found, we can return null
     return NextResponse.json(activeHealthPlan, { status: 200 });
 
   } catch (error) {

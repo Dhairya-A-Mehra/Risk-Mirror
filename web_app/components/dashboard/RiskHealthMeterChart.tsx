@@ -1,4 +1,3 @@
-// web_app/components/dashboard/RiskHealthMeterChart.tsx
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';

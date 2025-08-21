@@ -1,4 +1,3 @@
-// web_app/models/financePage.ts
 import { DynamicRiskDNA } from './user';
 import { Transaction } from './transaction';
 import { FinancialInstrument } from './financialInstrument';
@@ -12,8 +11,8 @@ export interface LoanEligibility {
 }
 
 export interface FinancePageData {
-  wellnessScore: number; // A simplified health score
-  wealthScore: number; // The financial score
+  wellnessScore: number; 
+  wealthScore: number; 
   financialCalmIndex: number;
   recentTransactions: Transaction[];
   spendingByCategory: { category: string; amount: number }[];

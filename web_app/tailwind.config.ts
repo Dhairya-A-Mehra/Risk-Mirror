@@ -8,10 +8,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        primary: "#4F46E5",   // Indigo
-        secondary: "#06B6D4", // Cyan
-        accent: "#F472B6",    // Pink
-        danger: "#EF4444",    // Red
+        primary: "#4F46E5",   
+        secondary: "#06B6D4", 
+        accent: "#F472B6",   
+        danger: "#EF4444",    
         background: {
           light: "#F9FAFB",
           dark: "#111827",

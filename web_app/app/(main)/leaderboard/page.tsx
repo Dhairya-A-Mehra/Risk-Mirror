@@ -1,4 +1,4 @@
-// web_app/app/leaderboard/page.tsx
+
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { LeaderboardClient } from '@/components/leaderboard/LeaderboardClient';
@@ -9,7 +9,7 @@ async function getLeaderboardData(sessionToken: string): Promise<LeaderboardData
   try {
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/leaderboard`, {
       headers: { Cookie: `sessionToken=${sessionToken}` },
-      cache: 'no-store', // Leaderboard data should be fresh
+      cache: 'no-store', 
     });
     if (!res.ok) return null;
     return res.json();
@@ -20,7 +20,7 @@ async function getLeaderboardData(sessionToken: string): Promise<LeaderboardData
 }
 
 async function getUserForNavbar(sessionToken: string): Promise<NavbarUser | null> {
-  // ... (You can reuse the function from finance/page.tsx)
+  
   try {
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/me`, {
       headers: { Cookie: `sessionToken=${sessionToken}` },
@@ -43,11 +43,9 @@ export default async function LeaderboardPage() {
   ]);
 
   if (!leaderboardData) {
-    // Handle the case where data couldn't be fetched, maybe show an error page
     return <div>Error loading leaderboard. Please try again later.</div>;
   }
 
-  // Convert ObjectId to string for userId in topUsers and currentUser
   const clientLeaderboardData = {
     ...leaderboardData,
     topUsers: leaderboardData.topUsers.map((entry: any) => ({

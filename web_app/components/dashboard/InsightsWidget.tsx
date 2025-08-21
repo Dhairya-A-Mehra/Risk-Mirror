@@ -1,4 +1,3 @@
-// web_app/components/dashboard/InsightsWidget.tsx
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Insight } from "@/models/insight";
 import { Lightbulb, TrendingUp } from "lucide-react";
@@ -14,7 +13,6 @@ export function InsightsWidget({ insights }: { insights: { recommendations: Insi
         <CardDescription className="text-gray-300">Actionable advice based on your data.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* --- Recommendations Section --- */}
         <div>
           <h4 className="flex items-center text-base font-bold text-blue-400 mb-2">
             <Lightbulb className="h-5 w-5 mr-2 text-amber-400" />
@@ -34,7 +32,6 @@ export function InsightsWidget({ insights }: { insights: { recommendations: Insi
           </div>
         </div>
 
-        {/* --- Emotional ROI Tracker Section --- */}
         <div>
           <h4 className="flex items-center text-base font-bold text-blue-400 mb-2">
             <TrendingUp className="h-5 w-5 mr-2 text-green-400" />

@@ -1,9 +1,8 @@
-// web_app/models/explainabilityLog.ts
 import { ObjectId } from 'mongodb';
 
 export interface FeatureImportance {
   feature: string;
-  value: number; // SHAP value or LIME weight
+  value: number; 
 }
 
 export interface ExplainabilityLog {

@@ -1,4 +1,4 @@
-// web_app/components/dashboard/DynamicDNAGraph.tsx
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { DynamicRiskDNA } from "@/models/user";
 import { motion } from 'framer-motion';
@@ -6,7 +6,7 @@ import { Zap, Link2, Brain, Heart, Landmark } from "lucide-react";
 
 export function DynamicDNAGraph({ riskDNA }: { riskDNA: DynamicRiskDNA }) {
   const getBarColor = (score: number) => {
-    // Use a bright blue for all bars
+    
     return "bg-blue-500";
   };
 
@@ -25,7 +25,7 @@ export function DynamicDNAGraph({ riskDNA }: { riskDNA: DynamicRiskDNA }) {
         <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-blue-400 flex items-center justify-center text-white font-bold text-lg shadow-lg">🧬</div>
         <h3 className="text-xl font-bold mb-3 text-white">Your Dynamic Risk DNA</h3>
         <p className="text-gray-300 flex-grow leading-relaxed text-sm mb-4">A real-time, evolving profile of your financial stability.</p>
-        {/* Bar Chart for Scores */}
+        
         <div className="space-y-4 mb-4">
           {(['financial', 'health', 'behavioral'] as const).map((key, i) => (
             <div key={key}>
@@ -41,7 +41,7 @@ export function DynamicDNAGraph({ riskDNA }: { riskDNA: DynamicRiskDNA }) {
             </div>
           ))}
         </div>
-        {/* --- NEW: Cross-Risk Interdependency Mapping Visualization --- */}
+        
         <div>
           <h4 className="font-semibold mb-3 text-white">Cross-Risk Links & Signals</h4>
           <div className="space-y-3">

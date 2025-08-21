@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ExplainabilityModal } from "@/components/dashboard/ExplainabilityModal"; // Re-use the modal!
+import { ExplainabilityModal } from "@/components/dashboard/ExplainabilityModal"; 
 import { LoanEligibility } from "@/models/financePage";
 import { ExplainabilityLog } from "@/models/explainabilityLog";
 

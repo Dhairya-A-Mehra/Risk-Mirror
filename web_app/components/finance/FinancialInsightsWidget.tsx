@@ -1,10 +1,9 @@
-// web_app/components/finance/FinancialInsightsWidget.tsx
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Lightbulb } from "lucide-react";
 import { Insight } from "@/models/insight";
 
 export function FinancialInsightsWidget({ insights }: { insights: Insight[] }) {
-    // Dummy data if the API doesn't provide any yet
+    
     const dummyInsights = [
         { _id: "1", title: "High Spending Alert", description: "Your spending on 'Dining Out' is 30% higher than your monthly average. Consider setting a budget." },
         { _id: "2", title: "Investment Opportunity", description: "Negative sentiment around one of your smaller holdings has lowered its price, which could be a buying opportunity." },

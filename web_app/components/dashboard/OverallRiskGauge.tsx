@@ -1,15 +1,12 @@
-// web_app/components/dashboard/OverallRiskGauge.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 import { DailyStressTestModal } from './DailyStressTestModal';
 
 export function OverallRiskGauge({ score }: { score: number }) {
-  // Assuming a score of 0-100 where higher is better (less risk)
-  const circumference = 2 * Math.PI * 45; // 2 * pi * radius
+  const circumference = 2 * Math.PI * 45; 
   const offset = circumference - (score / 100) * circumference;
 
   const getColor = (s: number) => {
-    // Use a bright blue for medium risk
     return "#3b82f6";
   };
 

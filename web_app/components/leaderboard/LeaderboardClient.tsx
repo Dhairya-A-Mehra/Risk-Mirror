@@ -1,15 +1,12 @@
-// web_app/components/leaderboard/LeaderboardClient.tsx
 "use client";
 
 import { LeaderboardData, LeaderboardEntry } from '@/models/leaderboard';
 import { motion } from 'framer-motion';
 import { Crown, Flame, ShieldCheck, Award } from 'lucide-react';
-import { ObjectId } from 'mongodb'; // We need this type for the props
+import { ObjectId } from 'mongodb'; 
 
-// --- FIX: The type from the server will have string IDs after serialization ---
-// We'll create a new type for what the client component actually receives.
 type ClientLeaderboardEntry = Omit<LeaderboardEntry, 'userId'> & {
-  userId: string; // The userId is now a string
+  userId: string; 
 };
 type ClientLeaderboardData = {
   topUsers: ClientLeaderboardEntry[];

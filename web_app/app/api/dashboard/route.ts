@@ -1,4 +1,4 @@
-// web_app/app/api/dashboard/route.ts
+
 
 import { NextResponse, NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
@@ -6,7 +6,6 @@ import { verifyAuth } from '@/lib/auth';
 import { ObjectId } from 'mongodb';
 import { google } from 'googleapis';
 
-// Import all our models
 import { User } from '@/models/user';
 import { Plan } from '@/models/plan';
 import { ExplainabilityLog } from '@/models/explainabilityLog';
@@ -36,9 +35,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
     
-    // --- Fetch Google Calendar Events (if linked) ---
     let googleCalendarEvents: any[] = [];
-    // --- FIX IS HERE: Use optional chaining (?.) to safely access nested properties ---
     if (user.integrations?.google?.linked && user.integrations.google.accessToken) {
         const oauth2Client = new google.auth.OAuth2();
         oauth2Client.setCredentials({ access_token: user.integrations.google.accessToken });

@@ -22,7 +22,7 @@ export function DailyStressTestModal() {
           </DialogDescription>
         </DialogHeader>
         <div className="py-4 space-y-4">
-          {/* In a real app, these would be interactive components */}
+          
           <p>1. Image Capture (Not implemented)</p>
           <p>2. Voice Recording (Not implemented)</p>
           <p>3. Typing Test (Not implemented)</p>
