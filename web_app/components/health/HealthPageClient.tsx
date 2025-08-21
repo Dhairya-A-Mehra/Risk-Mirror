@@ -1,4 +1,3 @@
-// web_app/components/health/HealthPageClient.tsx
 "use client";
 
 import { HealthPageData } from '@/models/healthPage';
@@ -12,7 +11,6 @@ import { NearbyHospitalsMap } from './NearbyHospitalsMap';
 import { FinancialPlanWidget } from '@/components/finance/FinancialPlanWidget';
 import { InsightsWidget } from '@/components/dashboard/InsightsWidget';
 
-// --- THE FIX: Import LoadScript from the correct library ---
 import { LoadScript } from '@react-google-maps/api';
 
 export function HealthPageClient({ initialData }: { initialData: HealthPageData }) {
@@ -52,7 +50,7 @@ export function HealthPageClient({ initialData }: { initialData: HealthPageData 
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Header */}
+     
       <div>
         <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-200">
           Health & Wellness Hub
@@ -89,9 +87,6 @@ export function HealthPageClient({ initialData }: { initialData: HealthPageData 
         <InsightsWidget insights={{ recommendations: initialData.latestHealthInsights, emotionalROI: [] }} />
       </div>
 
-      {/* --- THE FIX for the map --- */}
-      {/* We wrap the map component with LoadScript, which is the correct pattern */}
-      {/* for the @react-google-maps/api library. */}
       <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
           <NearbyHospitalsMap city={initialData.userCity} />
       </LoadScript>
