@@ -1,4 +1,4 @@
-// web_app/app/api/auth/signin/route.ts
+
 
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
@@ -29,26 +29,24 @@ export async function POST(request: Request) {
       return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
     }
 
-    // --- Create the JWT ---
     const payload = {
       userId: user._id.toString(),
       email: user.email,
     };
 
     const token = jwt.sign(payload, JWT_SECRET!, {
-      expiresIn: '1d', // Token expires in 1 day
+      expiresIn: '1d', 
     });
 
-    // --- Set the JWT in a Secure, HttpOnly Cookie ---
     const serializedCookie = serialize('sessionToken', token, {
-      httpOnly: true, // Prevents client-side JS from accessing the cookie (XSS protection)
-      secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production', 
       sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 1, // 1 day in seconds
+      maxAge: 60 * 60 * 24 * 1, 
       path: '/',
     });
 
-    // We send a success response and set the cookie in the headers
+    
     const response = NextResponse.json(
       { message: 'Signed in successfully' },
       { status: 200 }
