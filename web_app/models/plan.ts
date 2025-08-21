@@ -1,4 +1,3 @@
-// web_app/models/plan.ts
 import { ObjectId } from 'mongodb';
 
 export interface MonthlyGoal {
@@ -12,8 +11,7 @@ export interface Plan {
   _id?: ObjectId;
   userId: ObjectId;
   planTitle: string;
-  // --- NEW FIELD ---
-  category: 'health' | 'finance' | 'lifestyle'; // To distinguish plan types
+  category: 'health' | 'finance' | 'lifestyle'; 
   status: 'active' | 'completed';
   startDate: Date;
   endDate: Date;
