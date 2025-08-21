@@ -15,7 +15,7 @@ export default function HeroSection() {
           interactive dashboards, and gamified risk simulations.
         </p>
 
-        {/* CTA Buttons */}
+        
         <div className="mt-8 flex justify-center gap-4">
           <Link
             href="/signup"
