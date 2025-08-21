@@ -20,10 +20,10 @@ export function LeaderboardClient({ initialData }: { initialData: ClientLeaderbo
   const { topUsers, currentUser } = initialData;
 
   const getRankColor = (rank: number) => {
-    if (rank === 1) return 'bg-yellow-400 text-yellow-900';
-    if (rank === 2) return 'bg-slate-300 text-slate-800';
-    if (rank === 3) return 'bg-yellow-600 text-yellow-100';
-    return 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300';
+  if (rank === 1) return 'bg-yellow-400 text-gray-900 font-extrabold';
+  if (rank === 2) return 'bg-blue-900 text-blue-200 font-extrabold';
+  if (rank === 3) return 'bg-teal-900 text-white';
+    return 'bg-gray-900 text-blue-400 font-extrabold';
   };
 
   const BadgeIcon = ({ badgeName }: { badgeName: string }) => {
@@ -47,12 +47,14 @@ export function LeaderboardClient({ initialData }: { initialData: ClientLeaderbo
         </div>
       </div>
       <div className="col-span-4 flex items-center gap-3">
-        <div className="w-10 h-10 bg-slate-300 dark:bg-slate-600 rounded-full"></div>
-        <span className="font-medium truncate">{user.fullName}</span>
+        <div className="w-10 h-10 bg-gray-900 border border-blue-400/30 rounded-full flex items-center justify-center">
+          <span className="text-blue-900 font-bold text-base">{user.fullName.charAt(0)}</span>
+        </div>
+        <span className="font-medium truncate text-[#232e52]">{user.fullName}</span>
       </div>
-      <div className="col-span-2 text-center font-bold text-lg">{user.combinedScore.toLocaleString()}</div>
-      <div className="col-span-2 flex items-center justify-center gap-1 text-sm"><Flame className="h-4 w-4 text-orange-500" /> {user.streakScore}</div>
-      <div className="col-span-1 flex items-center justify-center gap-1 text-sm"><ShieldCheck className="h-4 w-4 text-green-500" /> {user.riskFitnessScore.toFixed(0)}</div>
+      <div className="col-span-2 text-center font-bold text-lg text-[#232e52]">{user.combinedScore.toLocaleString()}</div>
+  <div className="col-span-2 flex items-center justify-center gap-1 text-sm text-blue-900"><Flame className="h-4 w-4 text-orange-500" /> {user.streakScore}</div>
+  <div className="col-span-1 flex items-center justify-center gap-1 text-sm text-blue-900"><ShieldCheck className="h-4 w-4 text-green-500" /> {user.riskFitnessScore.toFixed(0)}</div>
       <div className="col-span-2 flex items-center justify-center gap-2">
         {user.badges.map(badge => <BadgeIcon key={badge} badgeName={badge} />)}
       </div>
@@ -60,14 +62,14 @@ export function LeaderboardClient({ initialData }: { initialData: ClientLeaderbo
   );
 
   return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-200">Leaderboard</h1>
-        <p className="text-slate-500 dark:text-slate-400">See how you stack up against other users in financial wellness.</p>
+    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mb-2">
+        <h1 className="text-4xl font-black bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-2 drop-shadow-lg">Leaderboard</h1>
+        <p className="text-lg text-white font-semibold drop-shadow-sm">See how you stack up against other users in financial wellness.</p>
       </div>
 
-      <div className="bg-card p-4 rounded-lg shadow">
-        <div className="grid grid-cols-12 gap-4 text-xs font-semibold text-muted-foreground px-3 pb-2 border-b">
+      <div className="bg-gray-800/80 backdrop-blur-lg border border-blue-400/30 rounded-2xl shadow-2xl p-4">
+        <div className="grid grid-cols-12 gap-4 text-xs font-semibold text-cyan-300 px-3 pb-2 border-b border-blue-400/30">
           <div className="col-span-1 text-center">Rank</div>
           <div className="col-span-4">User</div>
           <div className="col-span-2 text-center">Score</div>
@@ -78,14 +80,12 @@ export function LeaderboardClient({ initialData }: { initialData: ClientLeaderbo
 
         <div className="mt-2 space-y-2">
           {topUsers.map(user => (
-            // --- FIX #1: Use direct string comparison ---
             <UserRow key={user.userId} user={user} isCurrentUser={currentUser?.userId === user.userId} />
           ))}
         </div>
       </div>
       
       {currentUser && 
-        // --- FIX #2: Use direct string comparison here as well ---
         !topUsers.some(u => u.userId === currentUser.userId) && (
         <div className="sticky bottom-4">
             <UserRow user={currentUser} isCurrentUser={true} />

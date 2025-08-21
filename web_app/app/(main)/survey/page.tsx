@@ -162,30 +162,6 @@ export default function SurveyPage() {
           />
         ))}
 
-        {/* Storm Ripples */}
-        {Array.from({ length: 5 }).map((_, i) => (
-          <motion.div
-            key={`ripple-${i}`}
-            className="absolute border-2 border-cyan-400/20 rounded-full"
-            style={{
-              width: `${(i + 1) * 300}px`,
-              height: `${(i + 1) * 300}px`,
-              left: '50%',
-              top: '20%',
-              transform: 'translate(-50%, -50%)',
-            }}
-            animate={{
-              scale: [0, 2, 0],
-              opacity: [0, 0.4, 0],
-            }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "easeOut",
-              delay: i * 1.5,
-            }}
-          />
-        ))}
 
         {/* Water Splash Effects */}
         {Array.from({ length: 15 }).map((_, i) => (

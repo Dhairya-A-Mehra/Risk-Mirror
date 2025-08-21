@@ -66,7 +66,7 @@ export function SignUpForm() {
   }
 
   return (
-    <Card className="w-full">
+  <Card className="w-full bg-black/20 border border-blue-900 backdrop-blur-md">
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -75,10 +75,10 @@ export function SignUpForm() {
               name="fullName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Full Name</FormLabel>
-                  <FormControl>
-                    <Input placeholder="John Doe" {...field} />
-                  </FormControl>
+                  <FormLabel className="text-cyan-400">Full Name</FormLabel>
+                    <FormControl>
+                      <Input className="text-white" placeholder="John Doe" {...field} />
+                    </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -88,10 +88,10 @@ export function SignUpForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="you@example.com" {...field} />
-                  </FormControl>
+                  <FormLabel className="text-cyan-400">Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" className="text-white" placeholder="you@example.com" {...field} />
+                    </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -101,16 +101,29 @@ export function SignUpForm() {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
-                  </FormControl>
+                  <FormLabel className="text-cyan-400">Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" className="text-white" placeholder="••••••••" {...field} />
+                    </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+            <Button
+              type="submit"
+              className={`w-full border-cyan-400 bg-gradient-to-r from-blue-600 to-teal-600 text-white font-bold hover:bg-cyan-700/80 hover:text-white transition flex items-center justify-center ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              variant="outline"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                  </svg>
+                  Creating Account...
+                </span>
+              ) : 'Create Account'}
             </Button>
           </form>
         </Form>
