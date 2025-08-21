@@ -1,4 +1,4 @@
-// web_app/components/dashboard/FinancialPlanWidget.tsx
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Plan } from "@/models/plan";
 import { CheckCircle2, CircleDashed, AlertCircle } from "lucide-react";
