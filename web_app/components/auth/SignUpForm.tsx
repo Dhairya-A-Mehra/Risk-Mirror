@@ -1,4 +1,4 @@
-// web_app/components/auth/SignUpForm.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -20,7 +20,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-// Define the validation schema using Zod
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Full name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address." }),
