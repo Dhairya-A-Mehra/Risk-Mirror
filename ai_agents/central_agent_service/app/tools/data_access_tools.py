@@ -6,8 +6,7 @@ def get_user_financial_data(user_id: str) -> dict:
     Fetches the user's key financial metrics...
     """
     print(f"--- TOOL CALLED: Fetching financial data for user_id: {user_id} ---")
-    # This function takes user_id as an argument, but IGNORES it for now.
-    # It ALWAYS returns the same dictionary below.
+    
     mock_data = {
         "user_id": user_id,
         "credit_score": 750,
@@ -15,4 +14,4 @@ def get_user_financial_data(user_id: str) -> dict:
         "monthly_spending_average": 2100.50,
         "debt_to_income_ratio": 0.35
     }
-    return mock_data # It always returns this!
+    return mock_data 
