@@ -14,7 +14,7 @@ export function CalendarWidget({ events }: { events: DashboardData['googleCalend
           {events.map((event, index) => (
             <li key={index} className="flex items-center text-sm">
               <span className="h-2 w-2 rounded-full bg-blue-500 mr-2"></span>
-              <span>{event.title}</span>
+              <span>{event.summary}</span>
             </li>
           ))}
         </ul>

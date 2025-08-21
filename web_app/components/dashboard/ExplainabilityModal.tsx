@@ -14,28 +14,27 @@ export function ExplainabilityModal({ explanation }: { explanation: Explainabili
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">View Detailed Explanation</Button>
+        <Button variant="outline" className="w-full bg-gradient-to-r from-blue-600 to-teal-600 text-white">View Detailed Explanation</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="bg-gray-800/80 backdrop-blur-lg border border-blue-400/30 rounded-2xl shadow-2xl">
         <DialogHeader>
-          <DialogTitle>Decision Factors for Risk Score</DialogTitle>
-          <DialogDescription>{explanation.decisionSummary}</DialogDescription>
+          <DialogTitle className="text-xl font-bold mb-3 text-white">Decision Factors for Risk Score</DialogTitle>
+          <DialogDescription className="text-gray-300 flex-grow leading-relaxed text-base mb-4">{explanation.decisionSummary}</DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          {/* --- NEW: Explicitly mention the technology --- */}
-          <p className="text-xs text-center text-slate-500 dark:text-slate-400 mb-4 p-2 bg-slate-100 dark:bg-slate-800 rounded-md">
+          <p className="text-xs text-center text-gray-300 mb-4 p-2 bg-blue-900 rounded-md">
             Powered by SHAP & LIME models to show the impact of each factor on your score.
           </p>
           <ul className="space-y-3">
             {sortedFeatures.map((feat, i) => (
               <li key={i}>
-                <div className="flex justify-between items-center text-sm mb-1">
-                  <span className="font-medium text-slate-700 dark:text-slate-300">{feat.feature}</span>
-                  <span className={`font-semibold ${feat.value > 0 ? 'text-red-500' : 'text-green-500'}`}>
+                <div className="flex justify-between items-center text-base mb-1">
+                  <span className="font-medium text-white">{feat.feature}</span>
+                  <span className={`font-semibold ${feat.value > 0 ? 'text-red-400' : 'text-green-400'}`}>
                     {feat.value > 0 ? 'Increased Risk' : 'Decreased Risk'}
                   </span>
                 </div>
-                <div className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full">
+                <div className="w-full h-3 bg-blue-900 rounded-full">
                    <div 
                      style={{ width: `${Math.min(Math.abs(feat.value) * 100, 100)}%`}} 
                      className={`h-3 rounded-full ${feat.value > 0 ? 'bg-red-500' : 'bg-green-500'}`} 

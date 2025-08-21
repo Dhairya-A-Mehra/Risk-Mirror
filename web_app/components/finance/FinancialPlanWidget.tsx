@@ -43,24 +43,24 @@ export function FinancialPlanWidget({ plan, dummyPlan, isLoading, planType }: Re
   return (
     <Card className="w-full">
       <CardHeader>
-        <CardTitle>{displayPlan.planTitle}</CardTitle>
-        <CardDescription>Your personalized roadmap for your {planType.toLowerCase()} goals.</CardDescription>
+        <CardTitle>{currentPlan.planTitle}</CardTitle>
+        <CardDescription>Your personalized roadmap to achieve your financial goals.</CardDescription>
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
-          {displayPlan.monthlyGoals.map((goal, i) => (
+          {currentPlan.monthlyGoals.map((goal, i) => (
             <li key={i} className="flex items-center space-x-4">
               <div className="flex-shrink-0">{getStatusIcon(goal.status as any)}</div>
               <div>
-                <p className="font-medium text-slate-800 dark:text-slate-200">Month {goal.month}: {goal.description}</p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Target: {goal.target}</p>
+                <div className="font-semibold text-white text-base mb-1">Month {goal.month}: {goal.description}</div>
+                <div className="text-sm text-cyan-300 leading-relaxed">Target: {goal.target}</div>
               </div>
             </li>
           ))}
         </ul>
         {/* Only show the "Create Plan" button if no real plan exists */}
         {!plan && (
-            <Button variant="outline" className="mt-4 w-full">Create a New {planType} Plan</Button>
+            <Button variant="outline" className="mt-4 w-full">Create a New Plan</Button>
         )}
       </CardContent>
     </Card>

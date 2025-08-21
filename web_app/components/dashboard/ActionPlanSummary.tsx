@@ -1,25 +1,22 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Plan } from "@/models/plan";
+import { Plan, MonthlyGoal } from "@/models/plan";
 
-export function ActionPlanSummary({ plan }: { plan: Pick<Plan, 'planType' | 'goals'> | null }) {
+export function ActionPlanSummary({ plan }: { plan: Pick<Plan, 'planTitle' | 'monthlyGoals'> | null }) {
   if (!plan) return <Card><CardHeader><CardTitle>No Active Plan</CardTitle></CardHeader></Card>;
 
-  const firstGoal = plan.goals[0];
-  const progress = firstGoal ? (firstGoal.currentAmount / firstGoal.targetAmount) * 100 : 0;
+  const firstGoal: MonthlyGoal | undefined = plan.monthlyGoals[0];
+  // If you want to show progress, you need to add currentAmount/targetAmount to MonthlyGoal type
+  // For now, just show description and target
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">{plan.planType}</CardTitle>
-        <CardDescription>{firstGoal?.description || 'No goals set.'}</CardDescription>
+        <CardTitle className="text-lg">{plan.planTitle}</CardTitle>
+        <CardDescription>{firstGoal ? `${firstGoal.description} (Target: ${firstGoal.target})` : 'No goals set.'}</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="flex justify-between text-sm mb-1">
-          <span>Progress</span>
-          <span>{progress.toFixed(0)}%</span>
-        </div>
-        <Progress value={progress} />
+        {/* You can add more details or a progress bar if MonthlyGoal has progress info */}
       </CardContent>
     </Card>
   );

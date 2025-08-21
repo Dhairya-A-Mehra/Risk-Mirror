@@ -14,24 +14,24 @@ export function FullCalendarWidget({ events }: { events: CalendarEvent[] }) {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Upcoming in Your Google Calendar</CardTitle>
-      </CardHeader>
-      <CardContent>
+    <Card className="bg-gray-800/80 backdrop-blur-lg border border-blue-400/30 rounded-2xl shadow-2xl transition-all duration-300 h-full">
+      <CardContent className="p-6 text-center h-full flex flex-col">
+        <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">📅</div>
+        <h3 className="text-xl font-bold mb-3 text-white">Upcoming in Your Google Calendar</h3>
+        <p className="text-gray-200 flex-grow leading-relaxed text-base mb-4">Your linked events and reminders.</p>
         {events.length > 0 ? (
           <ul className="space-y-4">
             {events.map((event, i) => (
               <li key={i} className="flex items-start space-x-3">
-                <Calendar className="h-5 w-5 mt-1 text-blue-500 flex-shrink-0" />
+                <Calendar className="h-5 w-5 mt-1 text-blue-400 flex-shrink-0" />
                 <div>
-                  <p className="font-semibold text-slate-800 dark:text-slate-200">{event.summary}</p>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">{formatDate(event.start)}</p>
+                  <p className="font-semibold text-white text-base">{event.summary}</p>
+                  <p className="text-sm text-gray-300">{formatDate(event.start)}</p>
                 </div>
               </li>
             ))}
           </ul>
-        ) : <p className="text-sm text-slate-500">No upcoming events found or calendar not linked.</p>}
+        ) : <p className="text-sm text-gray-300">No upcoming events found or calendar not linked.</p>}
       </CardContent>
     </Card>
   );

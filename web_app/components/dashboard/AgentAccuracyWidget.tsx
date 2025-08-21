@@ -16,23 +16,22 @@ export function AgentAccuracyWidget({ accuracy }: AccuracyProps) {
   const healthAccuracy = accuracy?.health?.accuracy ?? 0;
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Agent Prediction Accuracy</CardTitle>
-        <CardDescription>Based on historical performance.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <div>
-          <div className="flex justify-between text-sm mb-1">
-            <span className="text-slate-600 dark:text-slate-300">Financial Agent</span>
-            <span className="font-semibold text-slate-800 dark:text-slate-100">{(financialAccuracy * 100).toFixed(0)}%</span>
+    <Card className="bg-gray-800/80 backdrop-blur-lg border border-blue-400/30 rounded-2xl shadow-2xl transition-all duration-300 h-full">
+      <CardContent className="p-6 text-center h-full flex flex-col">
+        <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">🎯</div>
+        <h3 className="text-xl font-bold mb-3 text-white">Agent Prediction Accuracy</h3>
+        <p className="text-gray-200 flex-grow leading-relaxed text-base mb-4">Based on historical performance.</p>
+        <div className="mb-4">
+          <div className="flex justify-between text-base mb-1">
+            <span className="text-white">Financial Agent</span>
+            <span className="font-semibold text-white">{(financialAccuracy * 100).toFixed(0)}%</span>
           </div>
           <Progress value={financialAccuracy * 100} className="h-2" />
         </div>
         <div>
-          <div className="flex justify-between text-sm mb-1">
-            <span className="text-slate-600 dark:text-slate-300">Health Agent</span>
-            <span className="font-semibold text-slate-800 dark:text-slate-100">{(healthAccuracy * 100).toFixed(0)}%</span>
+          <div className="flex justify-between text-base mb-1">
+            <span className="text-white">Health Agent</span>
+            <span className="font-semibold text-white">{(healthAccuracy * 100).toFixed(0)}%</span>
           </div>
           <Progress value={healthAccuracy * 100} className="h-2" />
         </div>

@@ -22,18 +22,17 @@ export function FinancePageClient({ initialData }: { initialData: FinancePageDat
   const triggerPanicMode = () => setShowBreathing(true);
   
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <AnimatePresence>
         {/* Feature 1 & 13: Box Breathing, triggered by panic mode */}
         {showBreathing && <BoxBreathing onClose={() => setShowBreathing(false)} />}
       </AnimatePresence>
-      
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-200">
+      <div className="mb-2">
+        <h1 className="text-4xl font-black bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-2 drop-shadow-lg">
           Financial Hub
         </h1>
-        <p className="text-slate-500 dark:text-slate-400">
+        <p className="text-lg text-white font-semibold drop-shadow-sm">
           Your command center for wealth and financial wellness.
         </p>
       </div>

@@ -25,16 +25,15 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
   const isHighRisk = initialData.riskDNA.overallScore < 40;
 
   return (
-    <div className="flex flex-col gap-6">
-      
+    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* ======================================================================= */}
       {/*                             HEADER SECTION                            */}
       {/* ======================================================================= */}
-      <div>
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-200">
+      <div className="mb-2">
+        <h1 className="text-4xl font-black bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-2 drop-shadow-lg">
           Welcome back, {initialData.user.fullName}!
         </h1>
-        <p className="text-slate-500 dark:text-slate-400">
+        <p className="text-lg text-white font-semibold drop-shadow-sm">
           Your personalized life co-pilot dashboard. This is your Life CFO Mode.
         </p>
       </div>
@@ -47,7 +46,7 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
       {/* ======================================================================= */}
       {/*                  ROW 1: THE VITALS (AT-A-GLANCE SCORES)                 */}
       {/* ======================================================================= */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch justify-items-stretch">
         <RiskScoreCard
           title="Financial Wellness"
           score={initialData.riskDNA.financialScore}
@@ -66,21 +65,17 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
           icon={<Brain className="h-6 w-6" />}
           color="text-green-500"
         />
-        {/* FEATURE 4 & 10: Daily Stress Test trigger & Risk Fitness Score visual */}
         <OverallRiskGauge score={initialData.riskDNA.overallScore} />
       </div>
 
       {/* ======================================================================= */}
       {/*                ROW 2: CORE ANALYSIS (TRENDS & DNA)                    */}
       {/* ======================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* FEATURE 5: Risk Health Meter Chart */}
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="lg:col-span-2 flex flex-col h-full">
           <RiskHealthMeterChart data={initialData.riskHistory} />
         </div>
-        
-        {/* FEATURE 8 & 9: Dynamic Risk DNA & Interdependency Mapping */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 flex flex-col h-full">
           <DynamicDNAGraph riskDNA={initialData.riskDNA} />
         </div>
       </div>
@@ -88,40 +83,35 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
       {/* ======================================================================= */}
       {/*             ROW 3: THE INTELLIGENT LAYER (PLANS & INSIGHTS)             */}
       {/* ======================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* FEATURE 7: 3-Month Action Plan */}
-        <FinancialPlanWidget plan={initialData.activePlan} />
-        
-        {/* FEATURE 11 & a part of FEATURE 3: Emotional ROI & Recommendations */}
-        <InsightsWidget insights={initialData.insights} />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+        <div className="flex flex-col h-full">
+          <FinancialPlanWidget plan={initialData.activePlan} />
+        </div>
+        <div className="flex flex-col h-full">
+          <InsightsWidget insights={initialData.insights} />
+        </div>
       </div>
 
       {/* ======================================================================= */}
       {/*                 ROW 4: THE TRUST & UTILITY LAYER                       */}
       {/* ======================================================================= */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* FEATURE 6: Google Calendar Integration */}
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="lg:col-span-2 flex flex-col h-full">
           <FullCalendarWidget events={initialData.googleCalendarEvents} />
         </div>
-
-        {/* This column holds the final two features */}
-        <div className="space-y-6">
-          {/* FEATURE 1: Agent Accuracy Score */}
+        <div className="space-y-6 flex flex-col h-full">
           <AgentAccuracyWidget accuracy={initialData.agentAccuracy} />
-
-          {/* FEATURE 2: Explainability (SHAP/LIME) */}
-          <Card>
-              <CardHeader>
-                  <CardTitle>Decision Insights</CardTitle>
-                  <CardDescription>The 'why' behind your score.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                  <p className="mb-4 text-sm text-slate-600 dark:text-slate-400">
-                      Understand the key factors that influenced your latest risk score calculation.
-                  </p>
-                  <ExplainabilityModal explanation={initialData.latestRiskExplanation} />
-              </CardContent>
+          <Card className="bg-gray-800/80 backdrop-blur-lg border border-blue-400/30 rounded-2xl shadow-2xl">
+            <CardHeader>
+              <CardTitle className="text-xl font-bold text-white">Decision Insights</CardTitle>
+              <CardDescription className="text-gray-300">The 'why' behind your score.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4 text-sm text-gray-300">
+                Understand the key factors that influenced your latest risk score calculation.
+              </p>
+              <ExplainabilityModal explanation={initialData.latestRiskExplanation} />
+            </CardContent>
           </Card>
         </div>
       </div>
