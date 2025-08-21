@@ -1,4 +1,4 @@
-// web_app/components/dashboard/FullCalendarWidget.tsx
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarEvent } from "@/models/dashboard";
 import { Calendar } from "lucide-react";
