@@ -1,13 +1,11 @@
 from langchain_groq import ChatGroq
-# Import MessagesPlaceholder
 from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import Runnable
 from app.tools.data_access_tools import get_user_financial_data_tool
 
 def create_financial_agent() -> Runnable:
-    """Creates the financial agent runnable chain."""
     
-    # This new prompt template is designed for conversation
+    
     prompt = ChatPromptTemplate.from_messages(
         [
             (
@@ -18,7 +16,7 @@ def create_financial_agent() -> Runnable:
                 "Once you have the tool's output, provide a final answer to the user. "
                 "Do not call the tool more than once for the same query."
             ),
-            # This placeholder will be filled with the entire conversation history
+            
             MessagesPlaceholder(variable_name="messages"),
         ]
     )

@@ -12,6 +12,8 @@ export interface Plan {
   _id?: ObjectId;
   userId: ObjectId;
   planTitle: string;
+  // --- NEW FIELD ---
+  category: 'health' | 'finance' | 'lifestyle'; // To distinguish plan types
   status: 'active' | 'completed';
   startDate: Date;
   endDate: Date;
