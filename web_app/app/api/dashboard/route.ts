@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
     }
     
     // --- Fetch Google Calendar Events (if linked) ---
-    let googleCalendarEvents: any[] = [];
+  let googleCalendarEvents: any[] = [];
     // --- FIX IS HERE: Use optional chaining (?.) to safely access nested properties ---
     if (user.integrations?.google?.linked && user.integrations.google.accessToken) {
         const oauth2Client = new google.auth.OAuth2();
@@ -62,6 +62,7 @@ export async function GET(request: NextRequest) {
         fullName: user.fullName,
         email: user.email,
         profile: user.profile,
+        gamification: user.gamification,
       },
       riskDNA: user.dynamicRiskDNA,
       activePlan,
@@ -75,6 +76,11 @@ export async function GET(request: NextRequest) {
         start: e.start || { date: new Date().toISOString() },
         end: e.end || { date: new Date().toISOString() }
       })),
+      riskHistory: [],
+      agentAccuracy: {
+        financial: { total: 0, correct: 0, accuracy: 0 },
+        health: { total: 0, correct: 0, accuracy: 0 }
+      }
     };
 
     return NextResponse.json(dashboardData, { status: 200 });
