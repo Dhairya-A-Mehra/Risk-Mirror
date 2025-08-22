@@ -39,6 +39,15 @@ Risk Mirror isn't just another budgeting app; it's a partner in well-being.
 
 ---
 
+## Images 
+
+![Landing](images/1-landing.jpg)
+![Survey](images/2-survey.jpg)
+![Dashboard](images/3-dashboard.jpg)
+![Profile](images/4-profile.jpg)
+
+---
+
 ## 🛠️ Tech Stack
 
 Our platform is built on a modern, scalable, and powerful technology stack designed for real-time data processing and intelligent decision-making.
