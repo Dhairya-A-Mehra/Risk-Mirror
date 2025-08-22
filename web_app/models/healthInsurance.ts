@@ -1,13 +1,12 @@
-// web_app/models/healthInsurance.ts
 import { ObjectId } from 'mongodb';
 
 export interface HealthInsurancePolicy {
   _id?: ObjectId;
-  userId: ObjectId; // Indexed
+  userId: ObjectId; 
   
-  providerName: string; // e.g., "Aetna", "Blue Cross"
+  providerName: string; 
   policyNumber: string;
-  policyType: string; // e.g., "PPO", "HMO"
+  policyType: string; 
   
   coverageDetails: {
     annualDeductible: number;
@@ -21,7 +20,6 @@ export interface HealthInsurancePolicy {
     nextDueDate: Date;
   };
   
-  // AI-generated summary of what's covered
   coverageAnalysis?: string;
   
   isArchived: boolean;

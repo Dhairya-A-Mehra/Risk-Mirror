@@ -6,12 +6,11 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center p-4">
-        {/* Logo */}
+        
         <Link href="/" className="text-2xl font-bold text-pink-500">
           FinWell
         </Link>
 
-        {/* Nav Links */}
         <div className="hidden md:flex gap-6 text-gray-700 font-medium">
           <Link href="#features" className="hover:text-pink-500">
             Features
@@ -24,7 +23,6 @@ export default function Navbar() {
           </Link>
         </div>
 
-        {/* Buttons */}
         <div className="flex gap-3">
           <Link
             href="/login"

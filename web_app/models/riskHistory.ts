@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { DynamicRiskDNA } from './user'; // Reuse the interface
+import { DynamicRiskDNA } from './user'; 
 
 export interface RiskHistory {
   _id?: ObjectId;

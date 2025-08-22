@@ -1,9 +1,8 @@
-// web_app/components/dashboard/DashboardClient.tsx
+
 "use client";
 
 import { DashboardData } from '@/models/dashboard';
 
-// --- Import ALL 12 of your feature components ---
 import { RiskScoreCard } from './RiskScoreCard';
 import { OverallRiskGauge } from './OverallRiskGauge';
 import { RiskHealthMeterChart } from './RiskHealthMeterChart';
@@ -14,21 +13,17 @@ import { FullCalendarWidget } from './FullCalendarWidget';
 import { ExplainabilityModal } from './ExplainabilityModal';
 import { AgentAccuracyWidget } from './AgentAccuracyWidget';
 import { PersonalizedRecommendationAlert } from './PersonalizedRecommendationAlert';
-// EmotionalROIWidget and CalendarWidget were combined into newer versions,
-// but we will ensure their features are represented.
+
 
 import { Brain, Heart, Landmark } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export function DashboardClient({ initialData }: { initialData: DashboardData }) {
-  // We can use the overall score for the alert. Let's assume lower is worse/higher risk.
   const isHighRisk = initialData.riskDNA.overallScore < 40;
 
   return (
     <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      {/* ======================================================================= */}
-      {/*                             HEADER SECTION                            */}
-      {/* ======================================================================= */}
+      
       <div className="mb-2">
         <h1 className="text-4xl font-black bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-2 drop-shadow-lg">
           Welcome back, {initialData.user.fullName}!
@@ -38,14 +33,8 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
         </p>
       </div>
 
-      {/* ======================================================================= */}
-      {/*               FEATURE 3: PERSONALIZED RECOMMENDATION ALERT              */}
-      {/* ======================================================================= */}
       {isHighRisk && <PersonalizedRecommendationAlert />}
 
-      {/* ======================================================================= */}
-      {/*                  ROW 1: THE VITALS (AT-A-GLANCE SCORES)                 */}
-      {/* ======================================================================= */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch justify-items-stretch">
         <RiskScoreCard
           title="Financial Wellness"
@@ -68,9 +57,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
         <OverallRiskGauge score={initialData.riskDNA.overallScore} />
       </div>
 
-      {/* ======================================================================= */}
-      {/*                ROW 2: CORE ANALYSIS (TRENDS & DNA)                    */}
-      {/* ======================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         <div className="lg:col-span-2 flex flex-col h-full">
           <RiskHealthMeterChart data={initialData.riskHistory} />
@@ -80,9 +66,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
         </div>
       </div>
       
-      {/* ======================================================================= */}
-      {/*             ROW 3: THE INTELLIGENT LAYER (PLANS & INSIGHTS)             */}
-      {/* ======================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         <div className="flex flex-col h-full">
           <FinancialPlanWidget plan={initialData.activePlan} />
@@ -92,9 +75,6 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
         </div>
       </div>
 
-      {/* ======================================================================= */}
-      {/*                 ROW 4: THE TRUST & UTILITY LAYER                       */}
-      {/* ======================================================================= */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
         <div className="lg:col-span-2 flex flex-col h-full">
           <FullCalendarWidget events={initialData.googleCalendarEvents} />

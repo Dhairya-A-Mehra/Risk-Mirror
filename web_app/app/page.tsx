@@ -7,15 +7,13 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white flex flex-col relative overflow-hidden">
-      {/* Animated Background Elements */}
+     
       <div className="absolute inset-0 overflow-hidden">
-        {/* Smooth gradient overlay for better blending */}
+        
         <div className="absolute inset-0 bg-gradient-to-br from-blue-950/80 via-teal-900/60 to-cyan-950/80"></div>
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-800/20 to-teal-800/30"></div>
         <div className="absolute inset-0 bg-gradient-to-bl from-cyan-900/40 via-transparent to-blue-900/50"></div>
         
-        {/* Cloudburst Animation Layer */}
-        {/* Animated Storm Clouds */}
         {Array.from({ length: 12 }).map((_, i) => (
           <motion.div
             key={`storm-cloud-${i}`}
@@ -41,7 +39,7 @@ export default function LandingPage() {
           />
         ))}
 
-        {/* Thunder Ripples */}
+    
         {Array.from({ length: 6 }).map((_, i) => (
           <motion.div
             key={`thunder-ripple-${i}`}
@@ -66,7 +64,7 @@ export default function LandingPage() {
           />
         ))}
 
-        {/* Water Splash Effects - Ground Impact */}
+        
         {Array.from({ length: 25 }).map((_, i) => (
           <motion.div
             key={`splash-${i}`}
@@ -91,7 +89,7 @@ export default function LandingPage() {
           />
         ))}
 
-        {/* Atmospheric Mist Layers */}
+   
         <motion.div
           className="absolute inset-0 bg-gradient-to-t from-blue-900/30 via-transparent to-cyan-900/20"
           animate={{
@@ -117,7 +115,7 @@ export default function LandingPage() {
           }}
         />
 
-        {/* Original floating orbs - keeping for layered effect */}
+       
         <motion.div
           className="absolute top-20 left-20 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl"
           animate={{
@@ -157,7 +155,7 @@ export default function LandingPage() {
           }}
         />
       </div>
-      {/* Navbar */}
+     
       <motion.nav 
         className="bg-black/20 backdrop-blur-lg border-b border-white/10 text-white px-6 py-4 flex justify-between items-center shadow-xl relative z-10"
         initial={{ opacity: 0, y: -50 }}
@@ -199,7 +197,7 @@ export default function LandingPage() {
         </motion.div>
       </motion.nav>
 
-      {/* Hero Section */}
+     
       <header className="flex flex-col items-center justify-center text-center py-24 px-6 relative z-10">
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"
@@ -267,7 +265,7 @@ export default function LandingPage() {
         </motion.div>
       </header>
 
-      {/* Features Section */}
+      
       <section className="py-20 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -378,7 +376,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Additional Value Proposition Section */}
+      
       <section className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-800/30 to-teal-800/30 backdrop-blur-sm"></div>
         <div className="w-full text-center relative z-10">
@@ -404,7 +402,7 @@ export default function LandingPage() {
             <motion.div
               className="flex gap-8"
               animate={{
-                x: [0, -2400], // Much larger movement for ultra-wide screens
+                x: [0, -2400], 
               }}
               transition={{
                 duration: 30,
@@ -417,7 +415,7 @@ export default function LandingPage() {
                 willChange: "transform"
               }}
             >
-              {/* Create enough duplicates for seamless full-screen loop */}
+              
               {Array(8).fill(null).map((_, setIndex) => (
                 [
                   {
@@ -474,7 +472,7 @@ export default function LandingPage() {
                       }}
                     >
                       <div className="bg-gray-800/90 backdrop-blur-lg border border-blue-400/40 rounded-xl p-5 h-40 hover:bg-gray-700/90 hover:border-teal-400/60 transition-all duration-500 shadow-lg hover:shadow-blue-400/40 relative overflow-hidden">
-                        {/* Gear-like background pattern */}
+                       
                         <motion.div
                           className="absolute inset-0 opacity-10"
                           animate={{
@@ -548,7 +546,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
+     
       <footer className="bg-gray-900 text-white py-12 text-center relative z-10">
         <div className="max-w-6xl mx-auto px-6">
           <motion.div

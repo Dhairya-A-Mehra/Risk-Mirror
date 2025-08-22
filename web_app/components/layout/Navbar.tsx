@@ -1,13 +1,10 @@
-// web_app/components/layout/Navbar.tsx
 "use client";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Bell, UserCircle } from "lucide-react";
-// Remove the direct dependency on DashboardData
-// import { DashboardData } from "@/models/dashboard";
 
-// --- FIX: Create a specific interface for the Navbar's props ---
+
 export interface NavbarUser {
   fullName: string;
 }

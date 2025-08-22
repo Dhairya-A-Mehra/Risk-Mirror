@@ -1,4 +1,3 @@
-// web_app/models/insight.ts
 import { ObjectId } from 'mongodb';
 
 export interface Insight {

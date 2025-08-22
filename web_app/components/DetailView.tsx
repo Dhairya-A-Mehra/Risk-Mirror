@@ -1,9 +1,7 @@
-// frontend/components/DetailView.tsx
 "use client";
 
 import { motion } from "framer-motion";
-// Import the type SectionData if it exists, otherwise define it here
-// Define SectionData type locally if not exported from "@/app/page"
+
 type SectionData = {
   id: string;
   title: string;
@@ -38,11 +36,11 @@ export function DetailView({ section, setSelectedId }: DetailViewProps) {
       className="fixed inset-0 bg-black/50 z-10 flex items-center justify-center"
       onClick={() => setSelectedId(null)}
     >
-      {/* Main card container to keep layout context */}
+   
       <motion.div
         layoutId={section.id}
         className={`${section.theme.bg} ${section.theme.text} w-11/12 md:w-2/3 lg:w-1/2 h-auto md:h-2/3 max-h-[90vh] rounded-2xl shadow-2xl relative flex flex-col p-8 overflow-y-auto`}
-        onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside card
+        onClick={(e) => e.stopPropagation()} 
       >
         <div className="flex justify-between items-start">
             <div>
@@ -61,9 +59,8 @@ export function DetailView({ section, setSelectedId }: DetailViewProps) {
         
         <div className={`w-16 h-1.5 ${section.theme.accent} rounded-full my-6`}></div>
 
-        {/* Diagonal Info Panels Container */}
         <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
-            {/* Panel 1 (Top-Left) */}
+            
             <motion.div 
               className="bg-white/10 p-6 rounded-lg"
               initial={{ opacity: 0, x: -50, y: -50 }}
@@ -73,7 +70,6 @@ export function DetailView({ section, setSelectedId }: DetailViewProps) {
               <p className="opacity-90 leading-relaxed">{section.details.panelOneContent}</p>
             </motion.div>
 
-            {/* Panel 2 (Bottom-Right) */}
             <motion.div 
               className="bg-white/10 p-6 rounded-lg"
               initial={{ opacity: 0, x: 50, y: 50 }}

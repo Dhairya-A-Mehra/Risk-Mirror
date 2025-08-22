@@ -1,7 +1,4 @@
-// web_app/models/user.ts
 import { ObjectId } from 'mongodb';
-
-// --- Embedded Sub-documents ---
 
 export interface Profile {
   avatar: string;
@@ -27,8 +24,8 @@ export interface GoogleIntegration {
 }
 
 export interface Profile {
-  avatar: string; // For the custom avatar
-  persona: string; // For persona types (heavy investor, etc.)
+  avatar: string; 
+  persona: string; 
 }
 
 export interface Gamification {
@@ -61,7 +58,6 @@ export interface DynamicRiskDNA {
   keyBehavioralSignals: string[];
 }
 
-// --- Main User Model ---
 
 export interface User {
   _id?: ObjectId;
@@ -76,11 +72,9 @@ export interface User {
   profile: {
     avatar: string;
     persona: string;
-    // We add location for the map feature
     location?: {
       city: string;
       country: string;
-      // You could also store lat/lon for more precise lookups
     };
   };
   medicalExpenseForecast?: {
@@ -95,8 +89,7 @@ export interface DynamicRiskDNA {
   financialScore: number;
   healthScore: number;
   behavioralScore: number;
-  // Feature 14: Financial Calm Index
-  financialCalmIndex: number; // A score combining financial volatility and user stress
+  financialCalmIndex: number; 
   interdependencies: Interdependency[];
   keyBehavioralSignals: string[];
 }

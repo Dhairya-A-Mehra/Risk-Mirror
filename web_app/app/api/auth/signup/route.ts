@@ -1,4 +1,4 @@
-// web_app/app/api/auth/signup/route.ts
+
 
 import { NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       passwordHash,
       createdAt: new Date(),
       updatedAt: new Date(),
-      // Initialize with default values from your model
+      
       profile: { avatar: "default_avatar.png", persona: "Cautious Starter" },
       gamification: { badges: [], leaderboardScore: 0, streak: { current: 0, longest: 0 } },
       dynamicRiskDNA: { lastCalculated: new Date(), overallScore: 50, financialScore: 50, healthScore: 50, behavioralScore: 50 },

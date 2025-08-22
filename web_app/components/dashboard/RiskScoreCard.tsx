@@ -1,4 +1,3 @@
-// web_app/components/dashboard/RiskScoreCard.tsx
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from 'framer-motion';
 

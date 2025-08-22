@@ -1,4 +1,4 @@
-// web_app/app/api/auth/me/route.ts
+
 
 import { NextResponse, NextRequest } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
 
     const user = await db.collection<User>('users').findOne(
       { _id: new ObjectId(userId) },
-      // Projection: explicitly exclude the password hash from the response
+      
       { projection: { passwordHash: 0 } } 
     );
 

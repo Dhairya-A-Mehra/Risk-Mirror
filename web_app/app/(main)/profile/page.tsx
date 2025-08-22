@@ -1,4 +1,4 @@
-// web_app/app/profile/page.tsx
+
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { ProfileClient } from '@/components/profile/ProfileClient';

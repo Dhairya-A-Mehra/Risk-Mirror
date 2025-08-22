@@ -1,5 +1,3 @@
-// web_app/lib/mongodb.ts
-
 import { MongoClient, Db } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -12,7 +10,6 @@ if (!MONGODB_DB_NAME) {
   throw new Error('Please define the MONGODB_DB_NAME environment variable inside .env');
 }
 
-// Caching the connection promise to avoid reconnecting on every API call (singleton pattern)
 let cachedClient: MongoClient | null = null;
 let cachedDb: Db | null = null;
 
