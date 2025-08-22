@@ -41,10 +41,12 @@ Risk Mirror isn't just another budgeting app; it's a partner in well-being.
 
 ## Images 
 
-![Landing](images/1-landing.jpg)
-![Survey](images/2-survey.jpg)
-![Dashboard](images/3-dashboard.jpg)
-![Profile](images/4-profile.jpg)
+<p float="left">
+  <img src="images/1-landing.jpg" width="200" />
+  <img src="images/2-survey.jpg" width="200" />
+  <img src="images/3-dashboard.jpg" width="200" />
+  <img src="images/4-profile.jpg" width="200" />
+</p>
 
 ---
 
