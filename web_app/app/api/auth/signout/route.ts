@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 
 export async function POST(request: Request) {
- 
+  // To sign out, we send back a cookie with the same name but an expired date
   const serializedCookie = serialize('sessionToken', '', {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',

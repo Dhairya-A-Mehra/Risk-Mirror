@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { DashboardClient } from '@/components/dashboard/DashboardClient';
 import { DashboardData } from '@/models/dashboard';
 import { Navbar } from '@/components/layout/Navbar';
-import { motion } from "framer-motion";
+// ...existing code...
 
 async function getDashboardData(): Promise<DashboardData | null> {
   try {

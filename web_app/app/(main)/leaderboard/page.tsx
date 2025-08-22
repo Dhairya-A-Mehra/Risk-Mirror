@@ -14,7 +14,7 @@ async function getLeaderboardData(sessionToken: string): Promise<LeaderboardData
     if (!res.ok) return null;
     return res.json();
   } catch (error) {
-    console.error('Failed to fetch leaderboard data:', error);
+  // ...existing code...
     return null;
   }
 }
@@ -48,7 +48,7 @@ export default async function LeaderboardPage() {
 
   const clientLeaderboardData = {
     ...leaderboardData,
-    topUsers: leaderboardData.topUsers.map((entry: any) => ({
+  topUsers: leaderboardData.topUsers.map((entry: any) => ({
       ...entry,
       userId: entry.userId.toString(),
     })),

@@ -1,4 +1,4 @@
-
+// app/(main)/survey/page.tsx
 "use client";
 
 import { useState } from "react";
@@ -23,7 +23,7 @@ const questions = [
 export default function SurveyPage() {
   const memoQuestions = useMemo(() => questions, []);
   const [answers, setAnswers] = useState<string[]>(Array(questions.length).fill(""));
-  const currentSurvey = 1; 
+  const currentSurvey = 1; // This would be passed as prop or from router
   const totalSurveys = 4;
   const progressPercentage = (currentSurvey / totalSurveys) * 100;
   
@@ -33,7 +33,7 @@ export default function SurveyPage() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-start bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white relative overflow-hidden py-6 px-4">
-     
+      {/* Progress Section */}
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -49,7 +49,7 @@ export default function SurveyPage() {
           </p>
         </div>
         
-      
+        {/* Progress Bar */}
         <div className="relative">
           <div className="w-full h-3 bg-gray-700/50 rounded-full backdrop-blur-sm border border-gray-600/30">
             <motion.div
@@ -60,7 +60,7 @@ export default function SurveyPage() {
             />
           </div>
           
-         
+          {/* Survey Step Indicators */}
           <div className="flex justify-between mt-3">
             {Array(totalSurveys).fill(null).map((_, i) => (
               <motion.div
@@ -85,9 +85,9 @@ export default function SurveyPage() {
           </div>
         </div>
       </motion.div>
-     
+      {/* Cloudburst Animation Background */}
       <div className="absolute inset-0 overflow-hidden">
-      
+        {/* Animated Background Clouds */}
         {Array.from({ length: 8 }).map((_, i) => (
           <motion.div
             key={`cloud-${i}`}
@@ -113,7 +113,7 @@ export default function SurveyPage() {
           />
         ))}
 
-        
+        {/* Rain Droplets - Main Burst */}
         {Array.from({ length: 80 }).map((_, i) => (
           <motion.div
             key={`droplet-${i}`}
@@ -138,7 +138,7 @@ export default function SurveyPage() {
           />
         ))}
 
-        
+        {/* Cloud Particles */}
         {Array.from({ length: 40 }).map((_, i) => (
           <motion.div
             key={`particle-${i}`}
@@ -163,7 +163,7 @@ export default function SurveyPage() {
         ))}
 
 
-        
+        {/* Water Splash Effects */}
         {Array.from({ length: 15 }).map((_, i) => (
           <motion.div
             key={`splash-${i}`}
@@ -188,7 +188,7 @@ export default function SurveyPage() {
           />
         ))}
 
-        
+        {/* Atmospheric Mist */}
         <motion.div
           className="absolute inset-0 bg-gradient-to-t from-blue-900/20 via-transparent to-cyan-900/10"
           animate={{
@@ -207,7 +207,7 @@ export default function SurveyPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.3 }}
         className="bg-gray-800/80 backdrop-blur-lg border border-blue-400/20 rounded-2xl shadow-2xl p-10 w-full max-w-7xl relative z-10 mx-auto"
-        style={{ width: "85%" }} 
+        style={{ width: "85%" }} // Enhanced to 85% of the page width
       >
         <motion.h1
           initial={{ opacity: 0, y: -20 }}
@@ -218,7 +218,7 @@ export default function SurveyPage() {
           Psychometric Risk Assessment
         </motion.h1>
         
-        
+        {/* Questions Grid with Better Alignment */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {questions.map((q, i) => (
             <motion.div
@@ -285,7 +285,7 @@ export default function SurveyPage() {
           ))}
         </div>
         
-        
+        {/* Enhanced Submit Button */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
