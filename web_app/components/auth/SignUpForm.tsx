@@ -1,4 +1,4 @@
-
+// web_app/components/auth/SignUpForm.tsx
 "use client";
 
 import { useState } from "react";
@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -39,6 +39,7 @@ export function SignUpForm() {
     },
   });
 
+  // --- THIS IS THE ONLY SECTION THAT IS CHANGING ---
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
@@ -54,8 +55,11 @@ export function SignUpForm() {
         throw new Error(data.message || 'Something went wrong');
       }
 
-      toast.success('Account created successfully! Please sign in.');
-      router.push('/signin');
+      // 1. Show a different, more encouraging toast message
+      toast.success('Account created successfully! One last step...');
+      
+      // 2. Redirect the new user to the calendar connection page
+      router.push('/onboarding/connect-calendar');
 
     } catch (error: any) {
       toast.error(error.message);
@@ -63,9 +67,11 @@ export function SignUpForm() {
       setIsLoading(false);
     }
   }
+  // --- END OF THE CHANGED SECTION ---
 
   return (
-  <Card className="w-full bg-black/20 border border-blue-900 backdrop-blur-md">
+    // Your beautiful custom-styled Card and Form are preserved
+    <Card className="w-full bg-black/20 border border-blue-900 backdrop-blur-md">
       <CardContent className="pt-6">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
