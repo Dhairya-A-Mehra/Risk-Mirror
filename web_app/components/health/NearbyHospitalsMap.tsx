@@ -14,9 +14,9 @@ export function NearbyHospitalsMap({ city }: { city?: string }) {
   const position = { lat: 19.0760, lng: 72.8777 };
 
   return (
-    <Card>
+    <Card className="bg-[rgba(15,23,42,0.6)] backdrop-blur-lg border border-blue-900/30 shadow-xl">
       <CardHeader>
-        <CardTitle>Nearby In-Network Hospitals</CardTitle>
+        <CardTitle className="bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">Nearby In-Network Hospitals</CardTitle>
       </CardHeader>
       <CardContent className="h-96 w-full p-0 overflow-hidden rounded-b-lg">
         {city ? (

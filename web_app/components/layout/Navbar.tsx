@@ -13,7 +13,7 @@ export function Navbar({ user }: { user: NavbarUser | null }) {
     const { logout } = useAuth();
 
     return (
-        <header className="sticky top-0 z-50 w-full bg-gradient-to-r from-blue-900 via-teal-800 to-cyan-900 border-b border-white/10 shadow-xl backdrop-blur-lg">
+    <header className="sticky top-0 z-50 w-full border-b border-white/10 shadow-xl backdrop-blur-lg" style={{background: 'rgba(15, 23, 42, 0.6)'}}>
             <div className="max-w-7xl mx-auto flex h-16 items-center px-6 justify-between">
                 <div className="flex items-center gap-8">
                     <Link href="/dashboard" className="flex items-center space-x-2">
