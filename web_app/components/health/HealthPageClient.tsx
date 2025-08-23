@@ -49,47 +49,30 @@ export function HealthPageClient({ initialData }: { initialData: HealthPageData 
   };
 
   return (
-    <div className="flex flex-col gap-6">
+  <div className="fixed inset-0 min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white flex flex-col z-0">
      
-      <div>
-        <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-200">
-          Health & Wellness Hub
-        </h1>
-        <p className="text-slate-500 dark:text-slate-400">
-          Your center for managing physical, mental, and financial well-being.
-        </p>
-      </div>
-
-      <ScoreCards 
-        wellnessScore={initialData.wellnessScore} 
-        wealthScore={initialData.wealthScore} 
-      />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <HealthInsuranceWidget policies={initialData.insurancePolicies} />
-        </div>
+  <main className="p-4 sm:p-6 lg:p-8 flex-1 flex flex-col items-center justify-start gap-6">
         <div>
-          <MedicalExpenseWidget 
-            forecast={initialData.medicalExpenseForecast}
-            explanation={initialData.latestHealthScoreExplanation}
-          />
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">Health & Wellness Hub</h1>
+          <p className="text-cyan-200/80">Your center for managing physical, mental, and financial well-being.</p>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <FinancialPlanWidget 
-            plan={healthPlan} 
-            dummyPlan={dummyHealthPlan}
-            isLoading={isLoadingPlan}
-            planType="Health"
-        />
-        <InsightsWidget insights={{ recommendations: initialData.latestHealthInsights, emotionalROI: [] }} />
-      </div>
-
-      <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
-          <NearbyHospitalsMap city={initialData.userCity} />
-      </LoadScript>
+        <div className="w-full max-w-4xl mx-auto">
+          <ScoreCards wellnessScore={initialData.wellnessScore} wealthScore={initialData.wealthScore} />
+        </div>
+  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full max-w-6xl items-stretch mx-auto">
+          <div className="lg:col-span-2 flex flex-col justify-stretch"><HealthInsuranceWidget policies={initialData.insurancePolicies} /></div>
+          <div className="flex flex-col justify-stretch"><MedicalExpenseWidget forecast={initialData.medicalExpenseForecast} explanation={initialData.latestHealthScoreExplanation} /></div>
+        </div>
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-6xl items-stretch mx-auto">
+          <div className="flex flex-col justify-stretch"><FinancialPlanWidget plan={healthPlan} dummyPlan={dummyHealthPlan} isLoading={isLoadingPlan} planType="Health" /></div>
+          <div className="flex flex-col justify-stretch"><InsightsWidget insights={{ recommendations: initialData.latestHealthInsights, emotionalROI: [] }} /></div>
+        </div>
+  <div className="w-full max-w-6xl mx-auto">
+          <LoadScript googleMapsApiKey={GOOGLE_MAPS_API_KEY}>
+            <NearbyHospitalsMap city={initialData.userCity} />
+          </LoadScript>
+        </div>
+      </main>
     </div>
   );
 }
