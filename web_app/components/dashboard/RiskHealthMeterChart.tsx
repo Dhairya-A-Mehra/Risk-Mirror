@@ -1,4 +1,5 @@
-"use client";
+'use client';
+
 import { Card, CardContent } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { RiskHistory } from "@/models/riskHistory";
@@ -23,6 +24,9 @@ export function RiskHealthMeterChart({ data }: ChartProps) {
   const formattedData = data.map(item => ({
     date: new Date(item.snapshotDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     Overall: item.riskScores.overallScore,
+    Financial: item.riskScores.financialScore,
+    Health: item.riskScores.healthScore,
+    Behavioral: item.riskScores.behavioralScore,
   }));
 
   return (
@@ -38,10 +42,13 @@ export function RiskHealthMeterChart({ data }: ChartProps) {
               <YAxis stroke="#94a3b8" />
               <Tooltip wrapperClassName="!bg-white !text-black !rounded-lg !shadow-lg" />
               <Line type="monotone" dataKey="Overall" stroke="#06b6d4" strokeWidth={3} dot={{ r: 4 }} />
+              <Line type="monotone" dataKey="Financial" stroke="#3b82f6" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="Health" stroke="#ef4444" strokeWidth={2} dot={{ r: 3 }} />
+              <Line type="monotone" dataKey="Behavioral" stroke="#10b981" strokeWidth={2} dot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
-        <p className="text-gray-300 flex-grow leading-relaxed text-sm mt-2">Your overall risk score over the last 30 days.</p>
+        <p className="text-gray-300 flex-grow leading-relaxed text-sm mt-2">Your risk scores over the last 30 days, influenced by user data and market news.</p>
       </CardContent>
     </Card>
   );

@@ -3,6 +3,10 @@ import { ObjectId } from 'mongodb';
 export interface Profile {
   avatar: string;
   persona: string;
+  location?: {
+    city: string;
+    country: string;
+  };
 }
 
 export interface Streak {
@@ -23,18 +27,6 @@ export interface GoogleIntegration {
   expiryDate?: Date;
 }
 
-export interface Profile {
-  avatar: string; 
-  persona: string; 
-}
-
-export interface Gamification {
-  badges: string[];
-  leaderboardScore: number;
-  streak: { current: number; longest: number; };
-}
-
-
 export interface Integrations {
   google: GoogleIntegration;
   fitbitLinked: boolean;
@@ -54,10 +46,10 @@ export interface DynamicRiskDNA {
   financialScore: number;
   healthScore: number;
   behavioralScore: number;
+  financialCalmIndex: number;
   interdependencies: Interdependency[];
   keyBehavioralSignals: string[];
 }
-
 
 export interface User {
   _id?: ObjectId;
@@ -69,28 +61,10 @@ export interface User {
   gamification: Gamification;
   dynamicRiskDNA: DynamicRiskDNA;
   integrations: Integrations;
-  profile: {
-    avatar: string;
-    persona: string;
-    location?: {
-      city: string;
-      country: string;
-    };
-  };
+  profile: Profile;
   medicalExpenseForecast?: {
     predictedAnnualCost: number;
     lastCalculated: Date;
   };
+  riskThreshold: number; // Made non-optional to match DashboardData
 }
-
-export interface DynamicRiskDNA {
-  lastCalculated: Date;
-  overallScore: number;
-  financialScore: number;
-  healthScore: number;
-  behavioralScore: number;
-  financialCalmIndex: number; 
-  interdependencies: Interdependency[];
-  keyBehavioralSignals: string[];
-}
-

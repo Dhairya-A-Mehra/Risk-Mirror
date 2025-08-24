@@ -1,62 +1,47 @@
-
-
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
+import { SignJWT } from 'jose';
 import { connectToDatabase } from '@/lib/mongodb';
-import { User } from '@/models/user';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { serialize } from 'cookie';
+import bcrypt from 'bcryptjs';
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const { email, password } = await request.json();
     if (!email || !password) {
       return NextResponse.json({ message: 'Email and password are required' }, { status: 400 });
     }
 
+    // Connect to MongoDB
     const { db } = await connectToDatabase();
-    const user = await db.collection<User>('users').findOne({ email });
+    const user = await db.collection('users').findOne({ email });
 
     if (!user) {
-      return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
+      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
-
-    if (!isPasswordCorrect) {
-      return NextResponse.json({ message: 'Invalid email or password' }, { status: 401 });
+    // Verify password
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    if (!isPasswordValid) {
+      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    const payload = {
-      userId: user._id.toString(),
-      email: user.email,
-    };
+    // Create JWT
+    const token = await new SignJWT({ userId: user._id.toString(), email })
+      .setProtectedHeader({ alg: 'HS256' })
+      .setExpirationTime('1h')
+      .sign(new TextEncoder().encode(process.env.JWT_SECRET!));
 
-    const token = jwt.sign(payload, JWT_SECRET!, {
-      expiresIn: '1d', 
-    });
-
-    const serializedCookie = serialize('sessionToken', token, {
-      httpOnly: true, 
-      secure: process.env.NODE_ENV === 'production', 
+    // Set cookie
+    const response = NextResponse.json({ success: true, user: { email, fullName: user.fullName } });
+    response.cookies.set('sessionToken', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 60 * 60 * 24 * 1, 
-      path: '/',
+      maxAge: 3600, // 1 hour
     });
-
-    
-    const response = NextResponse.json(
-      { message: 'Signed in successfully' },
-      { status: 200 }
-    );
-    response.headers.set('Set-Cookie', serializedCookie);
 
     return response;
-
   } catch (error) {
-    console.error("Signin failed:", error);
+    console.error('Signin error:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
   }
 }

@@ -6,5 +6,12 @@ langchain
 langgraph
 langchain-groq
 pymongo[srv]
+redis
+# For vector search with Redis
+langchain-redis
 # For embedding text
 langchain-openai
+redis
+langchain-redis
+langchain-openai # For the embedding model
+tiktoken # A dependency for text splitting

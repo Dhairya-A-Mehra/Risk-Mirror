@@ -1,40 +1,36 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import { User } from '@/models/user';
+import Link from 'next/link';
 
-export default function Navbar() {
+interface NavbarProps {
+  user: Pick<User, 'fullName' | 'email' | 'profile' | 'gamification' | 'riskThreshold'>;
+}
+
+export default function Navbar({ user }: NavbarProps) {
   return (
-    <nav className="w-full bg-white shadow-md sticky top-0 z-50">
+    <nav className="w-full bg-gray-900 shadow-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center p-4">
-        
-        <Link href="/" className="text-2xl font-bold text-pink-500">
-          FinWell
+        <Link href="/" className="text-2xl font-bold text-white">
+          Risk Mirror
         </Link>
 
-        <div className="hidden md:flex gap-6 text-gray-700 font-medium">
-          <Link href="#features" className="hover:text-pink-500">
-            Features
+        <div className="hidden md:flex gap-6 text-gray-300 font-medium">
+          <Link href="/dashboard" className="hover:text-blue-400">
+            Dashboard
           </Link>
-          <Link href="#about" className="hover:text-pink-500">
-            About
-          </Link>
-          <Link href="#contact" className="hover:text-pink-500">
-            Contact
+          <Link href="/profile" className="hover:text-blue-400">
+            Profile
           </Link>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex gap-3 items-center">
+          <span className="text-gray-300">Welcome, {user.fullName}</span>
           <Link
-            href="/login"
-            className="px-4 py-2 rounded-xl border border-pink-400 text-pink-500 hover:bg-pink-100"
+            href="/api/auth/signout"
+            className="px-4 py-2 rounded-xl border border-blue-400 text-blue-400 hover:bg-blue-500/10"
           >
-            Login
-          </Link>
-          <Link
-            href="/signup"
-            className="px-4 py-2 rounded-xl bg-pink-500 text-white hover:bg-pink-600 shadow-md"
-          >
-            Sign Up
+            Sign Out
           </Link>
         </div>
       </div>

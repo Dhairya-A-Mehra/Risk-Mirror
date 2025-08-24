@@ -1,14 +1,14 @@
 import { ObjectId } from 'mongodb';
 
+
+
 export interface EmotionScan {
-  source: 'image' | 'voice';
-  dominantEmotion: string;
+  emotion: string;
   stressLevel: number;
 }
 export interface TypingTest {
-  wpm: number;
-  accuracy: number;
-  panicSignal: number;
+  text: string;
+  score: number;
 }
 export interface WearableData {
   source: 'fitbit' | 'apple_health';
@@ -16,10 +16,8 @@ export interface WearableData {
   sleepHours?: number;
 }
 export interface HealthLog {
-  _id?: ObjectId;
   userId: ObjectId;
-  logDate: Date;
-  emotionScan?: EmotionScan;
-  typingTest?: TypingTest;
-  wearableData?: WearableData;
+  createdAt: Date;
+  emotionScan: EmotionScan;
+  typingTest: TypingTest;
 }

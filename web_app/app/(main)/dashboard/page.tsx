@@ -1,52 +1,63 @@
-
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { DashboardClient } from '@/components/dashboard/DashboardClient';
 import { DashboardData } from '@/models/dashboard';
-import { Navbar } from '@/components/layout/Navbar';
-// ...existing code...
+import { User } from '@/models/user';
+import Navbar from '@/components/Navbar';
+import DashboardClient from '@/components/dashboard/DashboardClient';
+import { verifyAuth } from '@/lib/auth';
+import { cookies } from 'next/headers';
+import { connectToDatabase } from '@/lib/mongodb';
+import { ObjectId } from 'mongodb';
 
-async function getDashboardData(): Promise<DashboardData | null> {
-  try {
-    const cookieStore = await cookies();
-    const sessionToken = cookieStore.get('sessionToken')?.value;
-
-    if (!sessionToken) {
-      return null;
-    }
-
-    const apiUrl = `${process.env.NEXTAUTH_URL}/api/dashboard`;
-
-    const response = await fetch(apiUrl, {
-      headers: {
-        Cookie: `sessionToken=${sessionToken}`,
-      },
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
-
-      console.log(`Failed to fetch dashboard data, status: ${response.status}`);
-      return null;
-    }
-
-    return response.json();
-  } catch (error) {
-    console.error('An error occurred while fetching dashboard data:', error);
-    return null;
-  }
+interface NavbarProps {
+  user: Pick<User, 'fullName' | 'email' | 'profile' | 'gamification' | 'riskThreshold'>;
 }
 
 export default async function DashboardPage() {
-  const dashboardData = await getDashboardData();
+  const decodedToken = await verifyAuth();
 
-  if (!dashboardData) {
+  if (!decodedToken) {
     redirect('/login');
   }
 
+  const { db } = await connectToDatabase();
+  const user = await db.collection<User>('users').findOne(
+    { _id: new ObjectId(decodedToken.userId) },
+    { projection: { fullName: 1, email: 1, profile: 1, gamification: 1, riskThreshold: 1 } }
+  );
+
+  if (!user) {
+    redirect('/login');
+  }
+
+  const navbarUser: Pick<User, 'fullName' | 'email' | 'profile' | 'gamification' | 'riskThreshold'> = {
+    fullName: user.fullName,
+    email: user.email,
+    profile: user.profile,
+    gamification: user.gamification,
+    riskThreshold: user.riskThreshold,
+  };
+
+  const token = (await cookies()).get('sessionToken')?.value;
+  if (!token) {
+    console.log('No session token found for API request');
+    redirect('/login');
+  }
+
+  const response = await fetch(`${process.env.NEXTAUTH_URL}/api/dashboard`, {
+    headers: { Authorization: `Bearer ${token}` },
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    console.error('Failed to fetch dashboard data:', response.statusText);
+    return <div>Error loading dashboard. Please try again later.</div>;
+  }
+
+  const dashboardData: DashboardData = await response.json();
+
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white flex flex-col">
-      <Navbar user={dashboardData.user} />
+    <div className="min-h-screen flex flex-col">
+      <Navbar user={navbarUser} />
       <main className="p-4 sm:p-6 lg:p-8 flex-1 flex flex-col items-center justify-start">
         <DashboardClient initialData={dashboardData} />
       </main>
