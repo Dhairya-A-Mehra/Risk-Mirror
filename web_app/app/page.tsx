@@ -7,13 +7,13 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white flex flex-col relative overflow-hidden">
-     
+
       <div className="absolute inset-0 overflow-hidden">
-        
+
         <div className="absolute inset-0 bg-gradient-to-br from-blue-950/80 via-teal-900/60 to-cyan-950/80"></div>
         <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-blue-800/20 to-teal-800/30"></div>
         <div className="absolute inset-0 bg-gradient-to-bl from-cyan-900/40 via-transparent to-blue-900/50"></div>
-        
+
         {Array.from({ length: 12 }).map((_, i) => (
           <motion.div
             key={`storm-cloud-${i}`}
@@ -39,7 +39,7 @@ export default function LandingPage() {
           />
         ))}
 
-    
+
         {Array.from({ length: 6 }).map((_, i) => (
           <motion.div
             key={`thunder-ripple-${i}`}
@@ -64,7 +64,7 @@ export default function LandingPage() {
           />
         ))}
 
-        
+
         {Array.from({ length: 25 }).map((_, i) => (
           <motion.div
             key={`splash-${i}`}
@@ -89,7 +89,7 @@ export default function LandingPage() {
           />
         ))}
 
-   
+
         <motion.div
           className="absolute inset-0 bg-gradient-to-t from-blue-900/30 via-transparent to-cyan-900/20"
           animate={{
@@ -101,7 +101,7 @@ export default function LandingPage() {
             ease: "easeInOut",
           }}
         />
-        
+
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-teal-800/10 to-transparent"
           animate={{
@@ -115,7 +115,7 @@ export default function LandingPage() {
           }}
         />
 
-       
+
         <motion.div
           className="absolute top-20 left-20 w-72 h-72 bg-blue-400/20 rounded-full blur-3xl"
           animate={{
@@ -155,8 +155,8 @@ export default function LandingPage() {
           }}
         />
       </div>
-     
-      <motion.nav 
+
+      <motion.nav
         className="bg-black/20 backdrop-blur-lg border-b border-white/10 text-white px-6 py-4 flex justify-between items-center shadow-xl relative z-10"
         initial={{ opacity: 0, y: -50 }}
         animate={{ opacity: 1, y: 0 }}
@@ -172,7 +172,7 @@ export default function LandingPage() {
         >
           Risk Mirror
         </motion.h1>
-        <motion.div 
+        <motion.div
           className="flex items-center gap-4"
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -182,7 +182,10 @@ export default function LandingPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Button className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white px-6 py-2 rounded-full shadow-lg transition-all duration-300 border border-white/20">
+            <Button
+              onClick={() => window.location.href = '/login'}
+              className="bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-700 hover:to-teal-700 text-white px-6 py-2 rounded-full shadow-lg transition-all duration-300 border border-white/20"
+            >
               Login
             </Button>
           </motion.div>
@@ -190,14 +193,17 @@ export default function LandingPage() {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Button className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-6 py-2 rounded-full shadow-lg transition-all duration-300 border border-white/20">
+            <Button
+              onClick={() => window.location.href = '/signup'}
+              className="bg-gradient-to-r from-teal-600 to-cyan-600 hover:from-teal-700 hover:to-cyan-700 text-white px-6 py-2 rounded-full shadow-lg transition-all duration-300 border border-white/20"
+            >
               Sign Up
             </Button>
           </motion.div>
         </motion.div>
       </motion.nav>
 
-     
+
       <header className="flex flex-col items-center justify-center text-center py-24 px-6 relative z-10">
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent"
@@ -214,7 +220,7 @@ export default function LandingPage() {
           <br />
           <motion.span
             className="bg-gradient-to-r from-teal-300 via-cyan-300 to-blue-300 bg-clip-text text-transparent"
-            animate={{ 
+            animate={{
               backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"]
             }}
             transition={{ duration: 3, repeat: Infinity }}
@@ -228,8 +234,8 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 1 }}
         >
-          Reflect on tomorrow's risks today. Harness the power of 
-          <motion.span 
+          Reflect on tomorrow's risks today. Harness the power of
+          <motion.span
             className="text-transparent bg-clip-text bg-gradient-to-r from-blue-300 to-teal-300 font-bold"
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
@@ -265,7 +271,7 @@ export default function LandingPage() {
         </motion.div>
       </header>
 
-      
+
       <section className="py-20 px-6 relative z-10">
         <div className="max-w-7xl mx-auto">
           <motion.div
@@ -282,7 +288,7 @@ export default function LandingPage() {
               Experience the future of risk management with cutting-edge technology
             </p>
           </motion.div>
-          
+
           <div className="grid md:grid-cols-3 gap-6">
             {[
               {
@@ -327,14 +333,14 @@ export default function LandingPage() {
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ 
-                  delay: i * 0.1, 
+                transition={{
+                  delay: i * 0.1,
                   duration: 0.6,
                   type: "spring",
                   stiffness: 100,
                   damping: 12
                 }}
-                whileHover={{ 
+                whileHover={{
                   scale: 1.03,
                   y: -5,
                   transition: { duration: 0.2, ease: "easeOut" }
@@ -345,7 +351,7 @@ export default function LandingPage() {
                   <CardContent className="p-6 text-center h-full flex flex-col">
                     <motion.div
                       className="text-4xl mb-4"
-                      whileHover={{ 
+                      whileHover={{
                         scale: 1.2,
                         transition: { duration: 0.3, type: "spring", stiffness: 300 }
                       }}
@@ -354,7 +360,7 @@ export default function LandingPage() {
                     </motion.div>
                     <motion.div
                       className={`w-14 h-14 mx-auto mb-4 rounded-full bg-gradient-to-r ${feature.color} flex items-center justify-center text-white font-bold text-lg shadow-lg`}
-                      whileHover={{ 
+                      whileHover={{
                         scale: 1.1,
                         boxShadow: "0 0 25px rgba(20, 184, 166, 0.6)",
                         transition: { duration: 0.2 }
@@ -376,7 +382,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      
+
       <section className="py-20 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-800/30 to-teal-800/30 backdrop-blur-sm"></div>
         <div className="w-full text-center relative z-10">
@@ -394,15 +400,15 @@ export default function LandingPage() {
             whileInView={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.8 }}
           >
-            Step into the future where risk management isn't reactive—it's predictive, 
+            Step into the future where risk management isn't reactive—it's predictive,
             intelligent, and seamlessly integrated into your decision-making process.
           </motion.p>
-          
+
           <div className="relative h-48 w-full overflow-hidden">
             <motion.div
               className="flex gap-8"
               animate={{
-                x: [0, -2400], 
+                x: [0, -2400],
               }}
               transition={{
                 duration: 30,
@@ -410,12 +416,12 @@ export default function LandingPage() {
                 ease: "linear",
                 repeatType: "loop"
               }}
-              style={{ 
+              style={{
                 width: "max-content",
                 willChange: "transform"
               }}
             >
-              
+
               {Array(8).fill(null).map((_, setIndex) => (
                 [
                   {
@@ -461,18 +467,18 @@ export default function LandingPage() {
                       key={uniqueKey}
                       className="group flex-shrink-0"
                       style={{ minWidth: "320px" }}
-                      whileHover={{ 
-                        scale: 1.1, 
+                      whileHover={{
+                        scale: 1.1,
                         y: -10,
-                        transition: { 
-                          duration: 0.4, 
-                          type: "spring", 
+                        transition: {
+                          duration: 0.4,
+                          type: "spring",
                           stiffness: 200
                         }
                       }}
                     >
                       <div className="bg-gray-800/90 backdrop-blur-lg border border-blue-400/40 rounded-xl p-5 h-40 hover:bg-gray-700/90 hover:border-teal-400/60 transition-all duration-500 shadow-lg hover:shadow-blue-400/40 relative overflow-hidden">
-                       
+
                         <motion.div
                           className="absolute inset-0 opacity-10"
                           animate={{
@@ -484,14 +490,14 @@ export default function LandingPage() {
                             ease: "linear"
                           }}
                         >
-                          <div className="w-full h-full bg-gradient-to-br from-blue-400/20 to-teal-400/20 rounded-full" 
-                               style={{
-                                 background: `conic-gradient(from 0deg, transparent 45deg, rgba(20, 184, 166, 0.1) 55deg, transparent 65deg, rgba(59, 130, 246, 0.1) 75deg, transparent 85deg)`,
-                                 transform: 'scale(1.2)'
-                               }}
+                          <div className="w-full h-full bg-gradient-to-br from-blue-400/20 to-teal-400/20 rounded-full"
+                            style={{
+                              background: `conic-gradient(from 0deg, transparent 45deg, rgba(20, 184, 166, 0.1) 55deg, transparent 65deg, rgba(59, 130, 246, 0.1) 75deg, transparent 85deg)`,
+                              transform: 'scale(1.2)'
+                            }}
                           />
                         </motion.div>
-                        
+
                         <motion.div
                           className="text-3xl mb-2 relative z-10"
                           animate={{
@@ -503,7 +509,7 @@ export default function LandingPage() {
                             ease: "linear",
                             delay: i * 0.1
                           }}
-                          whileHover={{ 
+                          whileHover={{
                             scale: 1.3,
                             rotate: 720,
                             transition: { duration: 0.8, type: "spring" }
@@ -546,7 +552,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-     
+
       <footer className="bg-gray-900 text-white py-12 text-center relative z-10">
         <div className="max-w-6xl mx-auto px-6">
           <motion.div
@@ -580,7 +586,7 @@ export default function LandingPage() {
               </ul>
             </div>
           </motion.div>
-          
+
           <motion.div
             className="border-t border-gray-700 pt-8"
             initial={{ opacity: 0 }}

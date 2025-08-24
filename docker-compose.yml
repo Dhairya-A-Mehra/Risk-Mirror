@@ -1,110 +1,22 @@
 version: "3.8"
 
-
 services:
-  auth_service:
-    build: ./backend/services/auth_service
-    env_file:
-      - .env
+  mongodb:
+    image: mongo:7.0
     ports:
-      - "8001:80"
-    volumes:
-      - ./backend/services/auth_service/app:/code/app
-    networks:
-      - aura_net
-    dns: 
-      - 8.8.8.8
-      - 1.1.1.1
-
-  profile_service:
-    build: ./backend/services/profile_service
-    env_file:
-      - .env
-    ports:
-      - "8002:80"
-    volumes:
-      - ./backend/services/profile_service/app:/code/app
-    networks:
-      - aura_net
-    dns: 
-      - 8.8.8.8
-      - 1.1.1.1
-
-  simulation_service:
-    build: ./backend/services/simulation_service
-    ports:
-      - "8003:80"
-    volumes:
-      - ./backend/services/simulation_service/app:/code/app
-    networks:
-      - aura_net
-    dns: 
-      - 8.8.8.8
-      - 1.1.1.1
-
-  ai_service:
-    build: ./backend/services/ai_service
-    env_file:
-      - .env
-    ports:
-      - "8004:80"
-    volumes:
-      - ./backend/services/ai_service/app:/code/app
-    networks:
-      - aura_net
-    dns: 
-      - 8.8.8.8
-      - 1.1.1.1
-
-  data_processor:
-    build: ./backend/data_processor
-    ports:
-      - "8005:80"
-    volumes:
-      - ./backend/data_processor/app:/code/app
-    depends_on:
-      - kafka
+      - "27017:27017"
     environment:
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: risk_mirror
+    volumes:
+      - mongodb_data:/data/db
     networks:
-      - aura_net
-    dns: 
-      - 8.8.8.8
-      - 1.1.1.1
-
-  redis:
-    image: redis:7
-    ports:
-      - "6379:6379"
-    networks:
-      - aura_net
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.0.1
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    networks:
-      - aura_net
-
-  kafka:
-    image: confluentinc/cp-kafka:7.0.1
-    depends_on:
-      - zookeeper
-    ports:
-      - "9092:9092"
-      - "29092:29092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-    networks:
-      - aura_net
+      - risk_mirror_net
 
 networks:
-  aura_net:
+  risk_mirror_net:
     driver: bridge
-    enable_ipv6: false 
+
+volumes:
+  mongodb_data: 

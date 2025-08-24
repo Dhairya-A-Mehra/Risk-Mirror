@@ -6,13 +6,11 @@ from fastapi.security import APIKeyHeader
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from langchain_core.messages import HumanMessage
-import redis
 
 # --- Import your application components ---
 from app.schemas import ChatRequest, ChatResponse
 from app.graph import create_agentic_graph
 from app.services.database import connect_to_mongodb, close_mongodb_connection
-from app.services.redis_client import get_redis_connection
 
 # --- Application Lifecycle (Startup and Shutdown) ---
 @asynccontextmanager
@@ -21,7 +19,6 @@ async def lifespan(app: FastAPI):
     print("--- FastAPI App Startup ---")
     load_dotenv()
     connect_to_mongodb()
-    get_redis_connection() # Initializes the Redis client
     print("--- Startup Complete ---")
     yield
     # Code to run on shutdown
@@ -37,9 +34,8 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-# Create the graph and get the Redis client *after* load_dotenv has run
+# Create the graph *after* load_dotenv has run
 agent_graph = create_agentic_graph()
-redis_client = get_redis_connection()
 
 # --- Security Configuration ---
 API_KEY = os.getenv("APP_API_KEY")
@@ -59,24 +55,11 @@ def health_check():
 @app.post("/chat", response_model=ChatResponse, tags=["Chat"])
 async def chat_endpoint(request: ChatRequest, api_key: str = Security(get_api_key)):
     """
-    Main endpoint for the chatbot. Receives a query, checks the cache,
-    and invokes the agentic graph to get a response.
+    Main endpoint for the chatbot. Receives a query and invokes the agentic graph to get a response.
     """
     print(f"--- Received chat request for user: {request.user_id} ---")
-    
-    # --- Step 1: Check Redis Cache ---
-    cache_key = f"chat_response:{request.user_id}:{request.query}"
-    try:
-        cached_response = redis_client.get(cache_key)
-        if cached_response:
-            print("--- CACHE HIT ---")
-            return ChatResponse(response=cached_response)
-    except redis.exceptions.ConnectionError as e:
-        print(f"--- REDIS WARNING: Could not connect to cache. {e} ---")
-    
-    print("--- CACHE MISS ---")
 
-    # --- Step 2: Prepare and Invoke the Graph ---
+    # --- Prepare and Invoke the Graph ---
     initial_state = {
         "user_id": request.user_id,
         "messages": [HumanMessage(content=request.query)],
@@ -88,13 +71,6 @@ async def chat_endpoint(request: ChatRequest, api_key: str = Security(get_api_ke
         final_state = agent_graph.invoke(initial_state)
         # The final answer is the last message in the history
         final_response = final_state['messages'][-1].content
-
-        # --- Step 3: Store the new response in Redis Cache ---
-        try:
-            redis_client.set(cache_key, final_response, ex=3600) # Cache for 1 hour
-            print("--- Response stored in cache ---")
-        except redis.exceptions.ConnectionError as e:
-            print(f"--- REDIS WARNING: Could not store response in cache. {e} ---")
             
         return ChatResponse(response=final_response)
         

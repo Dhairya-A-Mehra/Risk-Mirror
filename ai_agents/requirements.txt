@@ -6,8 +6,5 @@ langchain
 langgraph
 langchain-groq
 pymongo[srv]
-redis
-# For vector search with Redis
-langchain-redis
 # For embedding text
 langchain-openai

@@ -68,7 +68,7 @@ Our platform is built on a modern, scalable, and powerful technology stack desig
 - **Backend (AI Agents):** Python, FastAPI, LangChain, LangGraph
 - **Databases:**
   - **Primary:** MongoDB Atlas (for core user data)
-  - **Caching & Vector Store:** Redis (hosted on Upstash)
+  - **Caching:** In-memory caching (MongoDB-based)
 - **Real-Time Data Processing:** Apache Kafka (planned for production scale)
 - **LLMs & AI Services:** Groq (for agentic reasoning), Google Gemini (for image analysis), AssemblyAI (for voice analysis)
 - **Deployment:** Vercel (Frontend), Render (AI Service)
@@ -137,7 +137,7 @@ Follow these steps to set up and run the project on your local machine.
 - Node.js (v18 or later)
 - Python (v3.9 or later)
 - MongoDB account (local or Atlas)
-- Redis instance (local or Upstash)
+- MongoDB instance (local or Atlas)
 - API keys for Groq, Google Gemini, and AssemblyAI
 
 ### 1. Clone the Repository
@@ -167,7 +167,7 @@ ASSEMBLYAI_API_KEY=...
 # Databases
 MONGODB_URI=...
 MONGODB_DB_NAME=risk_mirror
-REDIS_URL=...
+
 ```
 
 ### 3. Run the AI Agent Service (FastAPI)

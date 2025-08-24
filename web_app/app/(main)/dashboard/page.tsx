@@ -25,7 +25,7 @@ async function getDashboardData(): Promise<DashboardData | null> {
     });
 
     if (!response.ok) {
-      
+
       console.log(`Failed to fetch dashboard data, status: ${response.status}`);
       return null;
     }

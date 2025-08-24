@@ -23,7 +23,7 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
 
   return (
     <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
+
       <div className="mb-2">
         <h1 className="text-4xl font-black bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-2 drop-shadow-lg">
           Welcome back, {initialData.user.fullName}!
@@ -65,7 +65,7 @@ export function DashboardClient({ initialData }: { initialData: DashboardData })
           <DynamicDNAGraph riskDNA={initialData.riskDNA} />
         </div>
       </div>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         <div className="flex flex-col h-full">
           <FinancialPlanWidget plan={initialData.activePlan} />
