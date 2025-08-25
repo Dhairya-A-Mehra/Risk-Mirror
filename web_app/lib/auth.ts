@@ -12,15 +12,15 @@ export interface DecodedToken {
   exp: number;
 }
 
-export async function verifyAuth(req?: NextRequest): Promise<DecodedToken | null> {
+export async function verifyAuth(req?: NextRequest | string): Promise<DecodedToken | null> {
   let token: string | undefined;
 
-  if (req) {
+  if (typeof req === 'string') {
+    // If req is a token string
+    token = req;
+    console.log('[verifyAuth] Token provided directly:', token);
+  } else if (req instanceof NextRequest) {
     // For API routes or middleware
-    token = req.cookies.get('sessionToken')?.value;
-    console.log('[verifyAuth] Token from req.cookies:', token);
-  } else {
-    // For server components
     token = (await cookies()).get('sessionToken')?.value;
     console.log('[verifyAuth] Token from cookies():', token);
   }
@@ -30,16 +30,23 @@ export async function verifyAuth(req?: NextRequest): Promise<DecodedToken | null
     return null;
   }
 
+  let decoded: DecodedToken;
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
-    console.log('[verifyAuth] Decoded token:', decoded);
-    if (!ObjectId.isValid(decoded.userId)) {
-      console.log('[verifyAuth] Invalid ObjectId in token:', decoded.userId);
-      return null;
+    decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+  } catch (error: any) {
+    if (error.name === 'TokenExpiredError') {
+      console.error('[verifyAuth] JWT verification failed: Token Expired');
+    } else if (error.name === 'JsonWebTokenError') {
+      console.error(`[verifyAuth] JWT verification failed: ${error.message}`);
+    } else {
+      console.error('[verifyAuth] JWT verification failed:', error);
     }
-    return decoded;
-  } catch (error) {
-    console.error('[verifyAuth] JWT verification failed:', error);
     return null;
   }
+
+  if (!ObjectId.isValid(decoded.userId)) {
+    console.log('[verifyAuth] Invalid ObjectId in token:', decoded.userId);
+    return null;
+  }
+  return decoded;
 }

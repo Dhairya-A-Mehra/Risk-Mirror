@@ -1,4 +1,4 @@
-import { MongoClient, Db } from 'mongodb';
+import { MongoClient, Db, ObjectId } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const MONGODB_DB_NAME = process.env.MONGODB_DB_NAME;
@@ -18,7 +18,10 @@ export async function connectToDatabase() {
     return { client: cachedClient, db: cachedDb };
   }
 
-  const client = new MongoClient(MONGODB_URI!);
+  const client = new MongoClient(MONGODB_URI!, {
+    // Specify TLS version 1.2
+    tls: true,
+  });
   await client.connect();
   const db = client.db(MONGODB_DB_NAME);
 
@@ -26,4 +29,16 @@ export async function connectToDatabase() {
   cachedDb = db;
 
   return { client, db };
+}
+
+export async function findUserById(userId: string | ObjectId) {
+  try {
+    const { db } = await connectToDatabase();
+    const objectId = typeof userId === 'string' ? new ObjectId(userId) : userId;
+    const user = await db.collection('users').findOne({ _id: objectId });
+    return user;
+  } catch (error) {
+    console.error('Error finding user by ID:', error);
+    return null;
+  }
 }

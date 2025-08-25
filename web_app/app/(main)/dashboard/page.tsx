@@ -15,28 +15,42 @@ import { ExplainabilityModal } from '@/components/dashboard/ExplainabilityModal'
 import { RiskThresholdWidget } from '@/components/dashboard/RiskThresholdWidget';
 import { DailyStressTestModal } from '@/components/dashboard/DailyStressTestModal';
 import { FullCalendarWidget } from '@/components/dashboard/FullCalendarWidget';
-import DashboardClient from '@/components/dashboard/DashboardClient';
 import { verifyAuth } from '@/lib/auth';
 import { cookies } from 'next/headers';
 import { connectToDatabase } from '@/lib/mongodb';
+import { MonthlyGoal, Plan } from '@/models/plan'; // Import Plan and MonthlyGoal types
+import { findUserById } from '@/lib/mongodb'; // Assuming findUserById is in mongodb.ts
 import { ObjectId } from 'mongodb';
 
 interface NavbarProps {
   user: Pick<User, 'fullName' | 'email' | 'profile' | 'gamification' | 'riskThreshold'>;
 }
 
+// Define the expected type for the active plan
 export default async function DashboardPage() {
   // Fetch all dashboard data from API routes
-  const scoresRes = await fetch(process.env.NEXTAUTH_URL + '/api/dashboard/scores', { cache: 'no-store', credentials: 'include' });
-  const scoresData = await scoresRes.json();
-  const isAuthenticated = !scoresData.message;
+  const token = (await cookies()).get('token')?.value;
+  // Modify verifyAuth to accept string or adjust this call if verifyAuth must take NextRequest
+  const decodedToken = await verifyAuth(token); 
 
-  let aiPlanData = {};
+  if (!decodedToken) {
+    redirect('/login');
+  }
+
+  const user = await findUserById(decodedToken.userId); // Assuming findUserById function exists
+
+  if (!user) {
+    redirect('/login');
+  }
+ let aiPlanData = {}; // Declare aiPlanData with broader scope
+
+  const scoresRes = await fetch(process.env.NEXTAUTH_URL + '/api/dashboard/scores', { cache: 'no-store', credentials: 'include' });
+  const scoresData = await scoresRes.json() || {}; // Initialize with empty object if null
   let insightsData = {};
-  if (isAuthenticated) {
-    const aiPlanRes = await fetch(process.env.NEXTAUTH_URL + '/api/dashboard/ai-plan', { cache: 'no-store', credentials: 'include' });
-    aiPlanData = await aiPlanRes.json();
+  if (user) { // Check if user is authenticated by checking if user object exists
+    const aiPlanRes = await fetch(`${process.env.NEXTAUTH_URL}/api/dashboard/ai-plan`, { cache: 'no-store', credentials: 'include' });
     const insightsRes = await fetch(process.env.NEXTAUTH_URL + '/api/dashboard/insights', { cache: 'no-store', credentials: 'include' });
+    aiPlanData = await aiPlanRes.json() || {}; // Assign to the broader scoped variable
     insightsData = await insightsRes.json();
   }
 
@@ -46,9 +60,16 @@ export default async function DashboardPage() {
   const riskHistory = scoresData.riskHistory || [];
   const thresholdUser = scoresData.user || {};
   const googleCalendarEvents = scoresData.googleCalendarEvents || [];
-  const latestRiskExplanation = scoresData.latestRiskExplanation || null;
+  const latestRiskExplanation = scoresData.latestRiskExplanation || {};
 
-  const activePlan = (aiPlanData && typeof aiPlanData === 'object' && 'plan' in aiPlanData ? aiPlanData.plan : null) as any;
+  // Explicitly type aiPlanData to help TypeScript understand the structure
+  const typedAiPlanData: { plan?: Pick<Plan, "planTitle" | "monthlyGoals"> | null } = aiPlanData as any;
+
+  const activePlan: Pick<Plan, "planTitle" | "monthlyGoals"> | null =
+    (typedAiPlanData &&
+      typeof typedAiPlanData === 'object' &&
+      typedAiPlanData.plan !== undefined) ? typedAiPlanData.plan : null;
+
   const insights = (insightsData && typeof insightsData === 'object' && 'insights' in insightsData ? insightsData.insights : { recommendations: [], emotionalROI: [] }) as any;
   const navbarUser = thresholdUser;
 
@@ -56,7 +77,7 @@ export default async function DashboardPage() {
     <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white flex flex-col">
       <Navbar user={navbarUser} />
       <main className="p-4 sm:p-6 lg:p-8 flex-1 flex flex-col items-center justify-start animate-fade-in">
-        {isAuthenticated ? (
+        {user ? (
           <>
             <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {/* Overall Score & Subscores */}
