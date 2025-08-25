@@ -80,7 +80,12 @@ export function DailyStressTestModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" className="mt-4 w-full">Take Daily Stress Test</Button>
+        <Button
+          variant="outline"
+          className="mt-4 w-full border-cyan-400 bg-gradient-to-r from-blue-600 to-teal-600 text-white font-bold hover:bg-cyan-700/80 hover:text-white transition"
+        >
+          Take Daily Stress Test
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>

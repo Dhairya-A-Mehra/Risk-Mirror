@@ -15,3 +15,4 @@ redis
 langchain-redis
 langchain-openai # For the embedding model
 tiktoken # A dependency for text splitting
+markdown2

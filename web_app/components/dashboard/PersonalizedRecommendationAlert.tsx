@@ -3,9 +3,9 @@ import { AlertCircle } from "lucide-react";
 
 export function PersonalizedRecommendationAlert() {
   return (
-    <Alert className="bg-gradient-to-br from-blue-950/80 via-teal-900/60 to-cyan-950/80 border-none shadow-lg">
-      <AlertCircle className="h-4 w-4 text-cyan-400" />
-      <AlertTitle className="bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">High Risk Detected!</AlertTitle>
+  <Alert className="bg-gradient-to-br from-red-900/40 via-red-700/30 to-red-600/40 border-2 border-red-400/60 shadow-lg">
+      <AlertCircle className="h-4 w-4 text-red-400 animate-pulse" />
+      <AlertTitle className="text-red-300 font-bold text-lg">High Risk Detected!</AlertTitle>
       <AlertDescription className="text-white">
         Your overall risk score is elevated. Consider reviewing your recent spending or taking a moment for a stress-reducing exercise.
       </AlertDescription>

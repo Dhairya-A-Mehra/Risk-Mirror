@@ -18,6 +18,16 @@ export interface SimulationGameResult {
 
 // This is the complete data contract for a user's survey submission
 export interface SurveySubmission {
+  // User's selected primary goal
+  primaryGoal?: string;
+  // Optional: Basic details entered by user (for mapping to user doc)
+  basicDetails?: {
+    fullName?: string;
+    age?: number;
+    gender?: string;
+    email?: string;
+    phone?: string;
+  };
   _id?: ObjectId;
   userId: ObjectId;
   submittedAt: Date;

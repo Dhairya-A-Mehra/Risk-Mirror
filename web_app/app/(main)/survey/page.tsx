@@ -63,21 +63,69 @@ const SurveyPage = () => {
       setIsSubmitting(false);
     }
   };
+  // Step titles and descriptions for context
+  const stepTitles = [
+    '',
+    'Choose Your Primary Goal',
+    'Personality & Risk Attitude',
+    'Financial Snapshot',
+    'Health & Wellness',
+    'Lifestyle & Social',
+    'Simulation Game',
+  ];
+  const stepDescriptions = [
+    '',
+    'What motivates you most right now?',
+    'Tell us about your mindset and risk-taking style.',
+    'Share your income, savings, and spending habits.',
+    'How do you care for your body and mind?',
+    'Your daily balance and social life.',
+    'Test your decision-making in a quick scenario.',
+  ];
+
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 flex items-center justify-center">
       <main className="w-full max-w-2xl mx-auto p-4 sm:p-8 lg:p-12">
-        <div className="bg-black/60 border border-blue-900 backdrop-blur-lg rounded-3xl shadow-2xl p-16 flex flex-col items-center min-h-[650px] w-full">
-          <span className="text-6xl font-extrabold bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-6 tracking-tight">Risk Mirror</span>
-          <span className="text-lg text-cyan-300 font-bold mb-8 tracking-wide">Survey</span>
+        <div className="bg-black/60 border border-blue-900 backdrop-blur-lg rounded-3xl shadow-2xl p-8 sm:p-12 flex flex-col items-center min-h-[700px] w-full relative overflow-hidden">
+          {/* Decorative background icon */}
+          <div className="absolute -top-10 -right-10 opacity-10 pointer-events-none select-none text-cyan-400 text-[10rem] z-0">
+            <span role="img" aria-label="survey">📝</span>
+          </div>
+          <span className="text-5xl sm:text-6xl font-extrabold bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-4 tracking-tight z-10">Risk Mirror</span>
+          <span className="text-lg text-cyan-300 font-bold mb-4 tracking-wide z-10">Survey</span>
           {calendarConnected && (
-            <div className="mb-6 p-4 bg-green-900/30 border border-green-500/30 rounded-lg">
+            <div className="mb-6 p-4 bg-green-900/30 border border-green-500/30 rounded-lg z-10">
               <p className="text-green-400 text-center">
                 ✅ Google Calendar connected successfully! Your schedule will be integrated with your risk analysis.
               </p>
             </div>
           )}
-          <div className="w-full max-w-lg mb-10">
+          <div className="w-full max-w-lg mb-8 z-10">
             <SurveyProgressBar currentStep={currentStep} totalSteps={TOTAL_STEPS} />
+          </div>
+          {/* Step title and description */}
+          <div className="w-full max-w-lg text-center mb-6 z-10">
+            <motion.h2
+              key={stepTitles[currentStep]}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4 }}
+              className="text-2xl sm:text-3xl font-bold text-white mb-2"
+            >
+              {stepTitles[currentStep]}
+            </motion.h2>
+            <motion.p
+              key={stepDescriptions[currentStep]}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              className="text-cyan-200 text-base mb-2"
+            >
+              {stepDescriptions[currentStep]}
+            </motion.p>
+            <div className="w-full border-b border-cyan-900/40 my-4" />
           </div>
           <AnimatePresence mode="wait">
             <motion.div
@@ -86,7 +134,7 @@ const SurveyPage = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.4 }}
-              className="mt-10 w-full max-w-lg"
+              className="mt-6 w-full max-w-lg z-10"
             >
               {/* Survey Steps */}
               {currentStep === 1 && <GoalStep data={surveyData} setData={setSurveyData} />}

@@ -7,8 +7,8 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { User } from '@/models/user';
 
-export function RiskThresholdWidget({ user }: { user: Pick<User, 'gamification' | 'riskThreshold'> }) {
-  const [threshold, setThreshold] = useState(user.riskThreshold || 50);
+export function RiskThresholdWidget({ user }: { user: any }) {
+  const [threshold, setThreshold] = useState(user?.riskThreshold ?? 50);
   const router = useRouter();
 
   const handleUpdateThreshold = async () => {
@@ -50,8 +50,15 @@ export function RiskThresholdWidget({ user }: { user: Pick<User, 'gamification' 
             value={threshold}
             onChange={(e) => setThreshold(Number(e.target.value))}
             placeholder="Set minimum risk score (0-100)"
+            className="text-white placeholder:text-gray-300 bg-gray-900 border-blue-400/30 focus:ring-cyan-400"
           />
-          <Button onClick={handleUpdateThreshold}>Update Threshold</Button>
+          <Button
+            onClick={handleUpdateThreshold}
+            variant="outline"
+            className="border-cyan-400 bg-gradient-to-r from-blue-600 to-teal-600 text-white font-bold hover:bg-cyan-700/80 hover:text-white transition"
+          >
+            Update Threshold
+          </Button>
         </div>
       </CardContent>
     </Card>

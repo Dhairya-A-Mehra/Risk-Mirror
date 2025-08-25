@@ -83,7 +83,11 @@ export const ChatClient = () => {
                   : 'bg-slate-700 text-slate-200 rounded-bl-none'
               }`}
             >
-              <p className="text-sm">{msg.text}</p>
+              {msg.sender === 'ai' ? (
+                <div className="text-sm prose prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: msg.text }} />
+              ) : (
+                <p className="text-sm">{msg.text}</p>
+              )}
             </div>
           </motion.div>
         ))}

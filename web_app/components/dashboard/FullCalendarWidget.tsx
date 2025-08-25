@@ -124,15 +124,31 @@ export function FullCalendarWidget({ events }: { events: CalendarEvent[] }) {
             <DialogTrigger asChild>
               <Button variant="outline" size="sm"><Plus className="h-4 w-4 mr-2" /> Add Event</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-gray-900/95 border border-blue-400/30 rounded-2xl shadow-2xl">
               <DialogHeader>
-                <DialogTitle>Add New Event</DialogTitle>
-                <DialogDescription>Create a new calendar event.</DialogDescription>
+                <DialogTitle className="text-white">Add New Event</DialogTitle>
+                <DialogDescription className="text-cyan-200">Create a new calendar event.</DialogDescription>
               </DialogHeader>
               <div className="py-4 space-y-4">
-                <Input placeholder="Event Summary" value={newEventSummary} onChange={(e) => setNewEventSummary(e.target.value)} />
-                <Input type="datetime-local" value={newEventStart} onChange={(e) => setNewEventStart(e.target.value)} />
-                <Button onClick={handleAddEvent}>Add Event</Button>
+                <Input 
+                  placeholder="Event Summary" 
+                  value={newEventSummary} 
+                  onChange={(e) => setNewEventSummary(e.target.value)} 
+                  className="text-white placeholder:text-cyan-300 bg-gray-800 border-blue-400/30 focus:ring-cyan-400" 
+                />
+                <Input 
+                  type="datetime-local" 
+                  value={newEventStart} 
+                  onChange={(e) => setNewEventStart(e.target.value)} 
+                  className="text-white bg-gray-800 border-blue-400/30 focus:ring-cyan-400" 
+                />
+                <Button 
+                  onClick={handleAddEvent}
+                  variant="outline"
+                  className="border-cyan-400 bg-gradient-to-r from-blue-600 to-teal-600 text-white font-bold hover:bg-cyan-700/80 hover:text-white transition"
+                >
+                  Add Event
+                </Button>
               </div>
             </DialogContent>
           </Dialog>

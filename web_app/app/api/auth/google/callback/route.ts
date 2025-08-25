@@ -49,7 +49,8 @@ export async function GET(request: NextRequest) {
     }
 
     // Get user from session
-    const user = await verifyAuth(request);
+    const token = request.cookies.get('sessionToken')?.value;
+    const user = token ? await verifyAuth(token) : null;
     if (!user) {
       return NextResponse.redirect('/login?error=not_authenticated');
     }
@@ -57,16 +58,26 @@ export async function GET(request: NextRequest) {
     // Update user's Google Calendar connection in database
     try {
       const { db } = await connectToDatabase();
+      // Fetch previous google integration data (if any)
+      const prevUser = await db.collection('users').findOne({ _id: new ObjectId(user.userId) });
+      const prevGoogle = prevUser?.integrations?.google || {};
+      // Use old refreshToken if not returned (Google only returns it on first consent)
+      const refreshToken = tokens.refresh_token || prevGoogle.refreshToken || '';
+      // Store expiryDate if present
+      const expiryDate = tokens.expiry_date ? new Date(tokens.expiry_date) : (prevGoogle.expiryDate ? new Date(prevGoogle.expiryDate) : null);
       await db.collection('users').updateOne(
         { _id: new ObjectId(user.userId) },
         {
           $set: {
             'integrations.google': {
+              ...prevGoogle,
               linked: true,
               accessToken: tokens.access_token,
-              refreshToken: tokens.refresh_token,
+              refreshToken,
+              expiryDate,
               email: userInfo.data.email,
               name: userInfo.data.name,
+              googleId: userInfo.data.id,
               connectedAt: new Date()
             }
           }

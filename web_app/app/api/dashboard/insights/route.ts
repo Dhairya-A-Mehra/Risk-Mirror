@@ -13,6 +13,19 @@ export async function GET(request: NextRequest) {
   const { db } = await connectToDatabase();
   const user = await db.collection('users').findOne({ _id: new ObjectId(decodedToken.userId) });
   if (!user) return NextResponse.json({ message: 'User not found' }, { status: 404 });
-  return NextResponse.json({ insights: user.insights || [] });
+  return NextResponse.json({
+    insights: (user.insights && user.insights.length > 0) ? user.insights : [
+      {
+        type: 'recommendation',
+        description: 'Complete your survey to get personalized insights!',
+        createdAt: new Date(),
+      },
+      {
+        type: 'emotionalROI',
+        description: 'No emotional ROI data yet.',
+        createdAt: new Date(),
+      },
+    ],
+  });
 }
 

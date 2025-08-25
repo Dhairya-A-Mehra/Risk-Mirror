@@ -17,50 +17,64 @@ import { ObjectId } from 'mongodb';
  * This function is self-contained and correct. NO CHANGES NEEDED HERE.
  */
 const calculateInitialRiskDNA = (submission: SurveySubmission): DynamicRiskDNA => {
-  let financialScore = 50;
+  // Defensive: always use numbers, never NaN/null, and strong defaults
   const financial = submission.financial ?? {};
   const health = submission.health ?? {};
   const lifestyle = submission.lifestyle ?? {};
-  const psychometricAnswers = submission.psychometricAnswers ?? [];
+  const psychometricAnswers = Array.isArray(submission.psychometricAnswers) ? submission.psychometricAnswers : [];
   const simulationResult = submission.simulationResult ?? {};
 
-  // Defensive defaults using optional chaining and fallback values
-  const monthlyIncome = typeof financial.monthlyIncome === 'number' ? financial.monthlyIncome : 0;
-  const monthlyExpenses = typeof financial.monthlyExpenses === 'number' ? financial.monthlyExpenses : 0;
-  const totalSavings = typeof financial.totalSavings === 'number' ? financial.totalSavings : 0;
-  const totalDebt = typeof financial.totalDebt === 'number' ? financial.totalDebt : 1;
-  const hasInvestments = !!financial.hasInvestments;
+  // Financial
+  const monthlyIncome = Number.isFinite(financial.monthlyIncome) ? financial.monthlyIncome : 0;
+  const monthlyExpenses = Number.isFinite(financial.monthlyExpenses) ? financial.monthlyExpenses : 0;
+  const totalSavings = Number.isFinite(financial.totalSavings) ? financial.totalSavings : 0;
+  const totalDebt = Number.isFinite(financial.totalDebt) && financial.totalDebt !== 0 ? financial.totalDebt : 1;
+  const hasInvestments = typeof financial.hasInvestments === 'boolean' ? financial.hasInvestments : false;
+  const investmentTypes = Array.isArray(financial.investmentTypes) ? financial.investmentTypes.length : 0;
 
+  let financialScore = 50;
   const netIncome = monthlyIncome - monthlyExpenses;
-  const savingsToDebtRatio = totalSavings / (totalDebt || 1);
+  const savingsToDebtRatio = totalSavings / totalDebt;
   financialScore += netIncome > 1000 ? 15 : 5;
   financialScore += savingsToDebtRatio > 2 ? 20 : 5;
   financialScore += hasInvestments ? 15 : 0;
+  financialScore += investmentTypes * 2; // reward for diversification
+
+  // Health
+  const exerciseFrequency = Number.isFinite(health.exerciseFrequency) ? health.exerciseFrequency : 0;
+  const dietQuality = Number.isFinite(health.dietQuality) ? health.dietQuality : 3;
+  const sleepHoursPerNight = Number.isFinite(health.sleepHoursPerNight) ? health.sleepHoursPerNight : 7;
 
   let healthScore = 40;
-  const exerciseFrequency = typeof health.exerciseFrequency === 'number' ? health.exerciseFrequency : 0;
-  const dietQuality = typeof health.dietQuality === 'number' ? health.dietQuality : 1;
-  const sleepHoursPerNight = typeof health.sleepHoursPerNight === 'number' ? health.sleepHoursPerNight : 0;
   healthScore += exerciseFrequency * 3;
   healthScore += dietQuality * 5;
   healthScore += sleepHoursPerNight > 6 ? 15 : 5;
 
+  // Lifestyle & Behavioral
+  const workLifeBalance = Number.isFinite(lifestyle.workLifeBalance) ? lifestyle.workLifeBalance : 3;
+  const socialFrequency = typeof lifestyle.socialFrequency === 'string' ? lifestyle.socialFrequency : 'monthly';
+  let socialScore = 0;
+  if (socialFrequency === 'daily') socialScore = 10;
+  else if (socialFrequency === 'weekly') socialScore = 7;
+  else if (socialFrequency === 'monthly') socialScore = 4;
+  else socialScore = 1;
+
   let behavioralScore = 30;
   const riskAnswerObj = psychometricAnswers.find(a => a.questionId === 'risk-propensity');
-  const riskTakingAnswer = typeof riskAnswerObj?.answerValue === 'number' ? riskAnswerObj.answerValue : 3;
-  const workLifeBalance = typeof lifestyle.workLifeBalance === 'number' ? lifestyle.workLifeBalance : 3;
-  const decisionQualityScore = typeof simulationResult.decisionQualityScore === 'number' ? simulationResult.decisionQualityScore : 0;
+  const riskTakingAnswer = (riskAnswerObj && Number.isFinite(riskAnswerObj.answerValue)) ? riskAnswerObj.answerValue : 3;
+  const decisionQualityScore = Number.isFinite(simulationResult.decisionQualityScore) ? simulationResult.decisionQualityScore : 5;
   behavioralScore += workLifeBalance * 4;
   behavioralScore += (5 - riskTakingAnswer) * 5;
   behavioralScore += decisionQualityScore * 0.5;
+  behavioralScore += socialScore;
 
+  // Clamp and round
   financialScore = Math.max(0, Math.min(100, Math.round(financialScore)));
   healthScore = Math.max(0, Math.min(100, Math.round(healthScore)));
   behavioralScore = Math.max(0, Math.min(100, Math.round(behavioralScore)));
 
-  // Only calculate overallScore if all are valid numbers
-  const validScores = [financialScore, healthScore, behavioralScore].every(s => typeof s === 'number' && !isNaN(s));
-  const overallScore = validScores ? Math.round((financialScore + healthScore + behavioralScore) / 3) : 0;
+  // Always valid numbers
+  const overallScore = Math.round((financialScore + healthScore + behavioralScore) / 3);
 
   return {
     lastCalculated: new Date(),
@@ -104,10 +118,26 @@ export async function POST(req: NextRequest) {
     if (userId) {
       // 3. Connect to the database
       const { db } = await connectToDatabase();
-      // 4. Update the specific user's document with the new dynamicRiskDNA
+
+      // 4. Prepare update object
+      const updateObj: any = {
+        dynamicRiskDNA: initialRiskDNA,
+        latestSurveySubmission: body, // For backward compatibility
+      };
+
+      // Optionally map basic details to top-level user fields if present
+      if (body.basicDetails) {
+        if (body.basicDetails.fullName) updateObj.fullName = body.basicDetails.fullName;
+        if (body.basicDetails.age) updateObj.age = body.basicDetails.age;
+        if (body.basicDetails.gender) updateObj.gender = body.basicDetails.gender;
+        if (body.basicDetails.email) updateObj.email = body.basicDetails.email;
+        if (body.basicDetails.phone) updateObj.phone = body.basicDetails.phone;
+      }
+
+      // Push the new survey submission to the surveySubmissions array
       const result = await db.collection('users').updateOne(
         { _id: userId },
-        { $set: { dynamicRiskDNA: initialRiskDNA } }
+        Object.assign({ $set: updateObj }, { $push: { surveySubmissions: { ...body, submittedAt: new Date() } } }) as any
       );
       // Check if the update was successful
       if (result.modifiedCount === 0) {
@@ -115,7 +145,7 @@ export async function POST(req: NextRequest) {
       }
       // 5. Return a success response
       return NextResponse.json({ 
-        message: 'Survey submitted and risk profile updated successfully!',
+        message: 'Survey submitted and risk profile updated successfully! All details saved.',
         calculatedScores: initialRiskDNA 
       }, { status: 200 });
     } else {
