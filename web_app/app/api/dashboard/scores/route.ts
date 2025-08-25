@@ -1,17 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { connectToDatabase } from '@/lib/mongodb';
-import { verifyAuth } from '@/lib/auth';
+import { verifyJwt } from '@/lib/jwt';
 import { ObjectId } from 'mongodb';
 
+
+
 export async function GET(request: NextRequest) {
-  let decodedToken = null;
-  try {
-    decodedToken = await verifyAuth(request);
-    console.log('[scores API] Decoded token:', decodedToken);
-  } catch (e) {
-    console.error('[scores API] Error in verifyAuth:', e);
-    decodedToken = null;
+  // Get JWT from sessionToken cookie
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
+  const decodedToken = verifyJwt(token);
   if (!decodedToken) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }

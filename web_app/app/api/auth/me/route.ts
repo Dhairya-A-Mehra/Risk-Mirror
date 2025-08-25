@@ -1,37 +1,40 @@
-import { NextResponse, NextRequest } from 'next/server';
-import { verifyAuth } from '@/lib/auth';
+
+import { NextRequest, NextResponse } from 'next/server';
+import { verifyJwt } from '@/lib/jwt';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
 export async function GET(request: NextRequest) {
-  const decodedToken = await verifyAuth(request);
-
-  if (!decodedToken) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) {
+    return NextResponse.json({ user: null, message: 'Unauthorized' }, { status: 401 });
   }
-
+  const decoded = verifyJwt(token);
+  if (!decoded) {
+    return NextResponse.json({ user: null, message: 'Unauthorized' }, { status: 401 });
+  }
   try {
     const { db } = await connectToDatabase();
+    // Return all fields needed for Navbar, Profile, etc.
     const user = await db.collection('users').findOne(
-      { _id: new ObjectId(decodedToken.userId) },
-      { projection: { fullName: 1, email: 1, profile: 1, gamification: 1, riskThreshold: 1 } }
+      { _id: new ObjectId(decoded.userId) },
+      {
+        projection: {
+          fullName: 1,
+          email: 1,
+          profile: 1,
+          gamification: 1,
+          riskThreshold: 1,
+          // add more fields as needed for your app
+        },
+      }
     );
-
     if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json({ user: null, message: 'User not found' }, { status: 404 });
     }
-
-    return NextResponse.json({
-      user: {
-        fullName: user.fullName,
-        email: user.email,
-        profile: user.profile,
-        gamification: user.gamification,
-        riskThreshold: user.riskThreshold,
-      },
-    });
+    // Always return the same shape for user
+    return NextResponse.json({ user });
   } catch (error) {
-    console.error('Error fetching user:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json({ user: null, message: 'Internal Server Error' }, { status: 500 });
   }
 }

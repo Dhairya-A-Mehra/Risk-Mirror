@@ -1,7 +1,8 @@
 // web_app/app/api/emotional-pulse/route.ts
 
+
 import { NextResponse, NextRequest } from 'next/server';
-import { verifyAuth } from '@/lib/auth';
+import { verifyJwt } from '@/lib/jwt';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import Groq from 'groq-sdk';
@@ -9,8 +10,17 @@ import { HealthLog } from '@/models/healthLog';
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const ASSEMBLYAI_API_KEY = process.env.ASSEMBLYAI_API_KEY;
+
+
 export async function POST(request: NextRequest) {
-  const decodedToken = verifyAuth(request);
+  // Get JWT from sessionToken cookie
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+  const decodedToken = verifyJwt(token);
   if (!decodedToken) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
@@ -27,12 +37,88 @@ export async function POST(request: NextRequest) {
     let typingScore = 0;
     let inputCount = typing ? 1 : 0;
 
-    if (image) {
-      console.warn('Image analysis not supported by Groq API. Skipping.');
+
+    // IMAGE ANALYSIS: OpenAI Vision API
+    if (image && OPENAI_API_KEY) {
+      const imageBuffer = Buffer.from(await image.arrayBuffer());
+      const base64Image = imageBuffer.toString('base64');
+      const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENAI_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: 'gpt-4-vision-preview',
+          messages: [
+            {
+              role: 'user',
+              content: [
+                { type: 'text', text: 'Analyze this face for signs of stress, panic, or depression. Output a JSON object with a single property "score" (0-100, higher=worse). Example: {"score": 50}.' },
+                { type: 'image_url', image_url: { url: `data:${image.type};base64,${base64Image}` } },
+              ],
+            },
+          ],
+          max_tokens: 100,
+          response_format: { type: 'json_object' },
+        }),
+      });
+      const openaiData = await openaiRes.json();
+      let parsedImage: any = { score: 0 };
+      try {
+        parsedImage = JSON.parse(openaiData.choices?.[0]?.message?.content || '{}');
+      } catch (e) {}
+      faceScore = typeof parsedImage.score === 'number' ? parsedImage.score : 0;
+      inputCount++;
     }
 
-    if (voice) {
-      console.warn('Voice transcription not supported by Groq API. Skipping.');
+    // VOICE ANALYSIS: AssemblyAI
+    if (voice && ASSEMBLYAI_API_KEY) {
+      // Upload audio to AssemblyAI
+      const voiceBuffer = Buffer.from(await voice.arrayBuffer());
+      const uploadRes = await fetch('https://api.assemblyai.com/v2/upload', {
+        method: 'POST',
+        headers: { 'authorization': ASSEMBLYAI_API_KEY },
+        body: voiceBuffer,
+      });
+      const uploadData = await uploadRes.json();
+      const audio_url = uploadData.upload_url;
+      // Request transcription + emotion
+      const transcriptRes = await fetch('https://api.assemblyai.com/v2/transcript', {
+        method: 'POST',
+        headers: {
+          'authorization': ASSEMBLYAI_API_KEY,
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify({
+          audio_url,
+          emotion_detection: true,
+        }),
+      });
+      const transcriptData = await transcriptRes.json();
+      // Poll for completion
+      let transcriptId = transcriptData.id;
+      let status = transcriptData.status;
+      let emotions = [];
+      for (let i = 0; i < 20 && status !== 'completed'; i++) {
+        await new Promise(r => setTimeout(r, 2000));
+        const pollRes = await fetch(`https://api.assemblyai.com/v2/transcript/${transcriptId}`, {
+          headers: { 'authorization': ASSEMBLYAI_API_KEY },
+        });
+        const pollData = await pollRes.json();
+        status = pollData.status;
+        if (status === 'completed') {
+          emotions = pollData.emotions || [];
+        }
+      }
+      // Score: average of negative emotions (anger, fear, sadness, etc.)
+      if (emotions.length > 0) {
+        const negative = emotions.filter((e: any) => ['angry','fear','sad','disgust'].includes(e.emotion));
+        if (negative.length > 0) {
+          voiceScore = Math.round(negative.reduce((sum: number, e: any) => sum + e.confidence * 100, 0) / negative.length);
+        }
+      }
+      inputCount++;
     }
 
     if (typing) {

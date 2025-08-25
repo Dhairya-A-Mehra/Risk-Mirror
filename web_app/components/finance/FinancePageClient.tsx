@@ -34,13 +34,22 @@ export function FinancePageClient({ initialData }: { initialData: FinancePageDat
       </div>
 
       <ScoreCards
-        wealthScore={initialData.wealthScore}
-        wellnessScore={initialData.wellnessScore}
-        financialCalmIndex={initialData.financialCalmIndex}
+        wealthScore={typeof initialData.wealthScore === 'number' ? initialData.wealthScore : 0}
+        wellnessScore={typeof initialData.wellnessScore === 'number' ? initialData.wellnessScore : 0}
+        financialCalmIndex={typeof initialData.financialCalmIndex === 'number' ? initialData.financialCalmIndex : 0}
         onPanic={triggerPanicMode}
       />
 
-      <FinancialPlanWidget plan={null} /> 
+      <FinancialPlanWidget 
+        plan={null}
+        dummyPlan={{
+          planTitle: 'No Plan',
+          category: 'finance',
+          monthlyGoals: []
+        }}
+        isLoading={false}
+        planType="Finance"
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
         <div className="lg:col-span-3">

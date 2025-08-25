@@ -81,9 +81,13 @@ export async function POST(req: NextRequest) {
   let userId: ObjectId | null = null;
   let decodedToken: any = null;
   try {
-    decodedToken = await verifyAuth(req);
-    if (decodedToken && decodedToken.userId) {
-      userId = new ObjectId(decodedToken.userId);
+    // Extract sessionToken from cookies
+    const token = req.cookies.get('sessionToken')?.value;
+    if (token) {
+      decodedToken = await verifyAuth(token);
+      if (decodedToken && decodedToken.userId) {
+        userId = new ObjectId(decodedToken.userId);
+      }
     }
   } catch (e) {
     // No token, allow anonymous

@@ -1,7 +1,7 @@
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { DashboardData } from '@/models/dashboard';
-import { User } from '@/models/user';
-import { Navbar, NavbarUser } from '@/components/layout/Navbar';
+import { verifyJwt } from '@/lib/jwt';
+import { Navbar } from '@/components/layout/Navbar';
 import { OverallRiskGauge } from '@/components/dashboard/OverallRiskGauge';
 import { RiskScoreCard } from '@/components/dashboard/RiskScoreCard';
 import { ActionPlanSummary } from '@/components/dashboard/ActionPlanSummary';
@@ -15,44 +15,26 @@ import { ExplainabilityModal } from '@/components/dashboard/ExplainabilityModal'
 import { RiskThresholdWidget } from '@/components/dashboard/RiskThresholdWidget';
 import { DailyStressTestModal } from '@/components/dashboard/DailyStressTestModal';
 import { FullCalendarWidget } from '@/components/dashboard/FullCalendarWidget';
-import { verifyAuth } from '@/lib/auth';
-import { cookies } from 'next/headers';
-import { connectToDatabase } from '@/lib/mongodb';
-import { MonthlyGoal, Plan } from '@/models/plan'; // Import Plan and MonthlyGoal types
-import { findUserById } from '@/lib/mongodb'; // Assuming findUserById is in mongodb.ts
-import { ObjectId } from 'mongodb';
+type Plan = any;
 
-interface NavbarProps {
-  user: Pick<User, 'fullName' | 'email' | 'profile' | 'gamification' | 'riskThreshold'>;
-}
-
-// Define the expected type for the active plan
 export default async function DashboardPage() {
-  // Fetch all dashboard data from API routes
-  const token = (await cookies()).get('token')?.value;
-  // Modify verifyAuth to accept string or adjust this call if verifyAuth must take NextRequest
-  const decodedToken = await verifyAuth(token); 
-
+  // Get JWT from cookies at the top-level (server component context)
+  const cookieStore = await cookies();
+  const token = cookieStore.get('sessionToken')?.value;
+  const decodedToken = token ? verifyJwt(token) : null;
   if (!decodedToken) {
     redirect('/login');
   }
 
-  const user = await findUserById(decodedToken.userId); // Assuming findUserById function exists
-
-  if (!user) {
-    redirect('/login');
-  }
- let aiPlanData = {}; // Declare aiPlanData with broader scope
-
+  // Fetch dashboard data
+  let aiPlanData: any = {};
+  let insightsData: any = {};
   const scoresRes = await fetch(process.env.NEXTAUTH_URL + '/api/dashboard/scores', { cache: 'no-store', credentials: 'include' });
-  const scoresData = await scoresRes.json() || {}; // Initialize with empty object if null
-  let insightsData = {};
-  if (user) { // Check if user is authenticated by checking if user object exists
-    const aiPlanRes = await fetch(`${process.env.NEXTAUTH_URL}/api/dashboard/ai-plan`, { cache: 'no-store', credentials: 'include' });
-    const insightsRes = await fetch(process.env.NEXTAUTH_URL + '/api/dashboard/insights', { cache: 'no-store', credentials: 'include' });
-    aiPlanData = await aiPlanRes.json() || {}; // Assign to the broader scoped variable
-    insightsData = await insightsRes.json();
-  }
+  const scoresData = await scoresRes.json() || {};
+  const aiPlanRes = await fetch(`${process.env.NEXTAUTH_URL}/api/dashboard/ai-plan`, { cache: 'no-store', credentials: 'include' });
+  const insightsRes = await fetch(process.env.NEXTAUTH_URL + '/api/dashboard/insights', { cache: 'no-store', credentials: 'include' });
+  aiPlanData = await aiPlanRes.json() || {};
+  insightsData = await insightsRes.json();
 
   // Map API responses to widget props
   const riskDNA = scoresData.riskDNA || {};
@@ -61,65 +43,58 @@ export default async function DashboardPage() {
   const thresholdUser = scoresData.user || {};
   const googleCalendarEvents = scoresData.googleCalendarEvents || [];
   const latestRiskExplanation = scoresData.latestRiskExplanation || {};
-
-  // Explicitly type aiPlanData to help TypeScript understand the structure
-  const typedAiPlanData: { plan?: Pick<Plan, "planTitle" | "monthlyGoals"> | null } = aiPlanData as any;
-
-  const activePlan: Pick<Plan, "planTitle" | "monthlyGoals"> | null =
-    (typedAiPlanData &&
-      typeof typedAiPlanData === 'object' &&
-      typedAiPlanData.plan !== undefined) ? typedAiPlanData.plan : null;
-
+  const activePlan: Plan | null = (aiPlanData && typeof aiPlanData === 'object' && 'plan' in aiPlanData) ? aiPlanData.plan : null;
   const insights = (insightsData && typeof insightsData === 'object' && 'insights' in insightsData ? insightsData.insights : { recommendations: [], emotionalROI: [] }) as any;
   const navbarUser = thresholdUser;
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white flex flex-col">
       <Navbar user={navbarUser} />
-      <main className="p-4 sm:p-6 lg:p-8 flex-1 flex flex-col items-center justify-start animate-fade-in">
-        {user ? (
-          <>
-            <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Overall Score & Subscores */}
-              <div className="col-span-1 lg:col-span-1 flex flex-col gap-4">
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent mb-4">Risk Dashboard</h1>
-                <OverallRiskGauge score={riskDNA.overallScore} />
-                <RiskScoreCard title="Health" score={riskDNA.healthScore} icon="health" color="emerald" />
-                <RiskScoreCard title="Lifestyle" score={riskDNA.behavioralScore} icon="lifestyle" color="cyan" />
-                <RiskScoreCard title="Finance" score={riskDNA.financialScore} icon="finance" color="blue" />
-              </div>
+      <main className="p-4 sm:p-6 lg:p-8 flex-1 flex flex-col items-center justify-start animate-fade-in w-full">
+        {/* User greeting */}
+        <div className="w-full max-w-7xl mx-auto mb-8 flex flex-col items-start">
+          <h1 className="text-4xl font-bold mb-1">Welcome{navbarUser?.fullName ? `, ${navbarUser.fullName}` : ''}!</h1>
+          <p className="text-lg text-cyan-200">Here is your personalized risk dashboard.</p>
+        </div>
 
-              {/* 3-Month AI Plan & Insights */}
-              <div className="col-span-1 lg:col-span-1 flex flex-col gap-4">
-                <ActionPlanSummary plan={activePlan} />
-                <InsightsWidget insights={insights} />
-                <EmotionalROIWidget insight={insights.emotionalROI?.[0]?.description || ''} />
-                <PersonalizedRecommendationAlert />
-              </div>
+        {/* Overall Score Gauge centered */}
+        <div className="w-full max-w-3xl mx-auto mb-8 flex flex-col items-center">
+          <OverallRiskGauge score={riskDNA.overallScore} />
+        </div>
 
-              {/* Risk Health Meter, Agent Accuracy, Dynamic DNA Graph */}
-              <div className="col-span-1 lg:col-span-1 flex flex-col gap-4">
-                <RiskHealthMeterChart data={riskHistory} />
-                <AgentAccuracyWidget accuracy={agentAccuracy} />
-                <DynamicDNAGraph riskDNA={riskDNA} />
-                <ExplainabilityModal explanation={latestRiskExplanation} />
-              </div>
-            </div>
-
-            {/* Threshold, Daily Pulse Check, Calendar */}
-            <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-              <RiskThresholdWidget user={thresholdUser} />
-              <DailyStressTestModal />
-              <FullCalendarWidget events={googleCalendarEvents} />
-            </div>
-          </>
-        ) : (
-          <div className="w-full max-w-2xl mx-auto flex flex-col items-center justify-center py-24">
-            <h1 className="text-3xl font-bold mb-6 text-white">Please log in to view your dashboard scores.</h1>
-            <p className="text-lg text-gray-300 mb-8">You must be authenticated to view your personalized risk scores and insights.</p>
-            <a href="/login" className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition">Go to Login</a>
+        {/* 2-column grid: Scores and Plan/Insights */}
+        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          {/* Subscores */}
+          <div className="flex flex-col gap-4">
+            <RiskScoreCard title="Health" score={riskDNA.healthScore} icon="health" color="emerald" />
+            <RiskScoreCard title="Lifestyle" score={riskDNA.behavioralScore} icon="lifestyle" color="cyan" />
+            <RiskScoreCard title="Finance" score={riskDNA.financialScore} icon="finance" color="blue" />
+            <RiskThresholdWidget user={thresholdUser} />
           </div>
-        )}
+          {/* Plan & Insights */}
+          <div className="flex flex-col gap-4">
+            <ActionPlanSummary plan={activePlan} />
+            <InsightsWidget insights={insights} />
+            <EmotionalROIWidget insight={insights.emotionalROI?.[0]?.description || ''} />
+            <PersonalizedRecommendationAlert />
+          </div>
+        </div>
+
+        {/* Full-width section: Charts and Widgets */}
+        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          <div className="col-span-1 flex flex-col gap-4">
+            <RiskHealthMeterChart data={riskHistory} />
+            <AgentAccuracyWidget accuracy={agentAccuracy} />
+          </div>
+          <div className="col-span-1 flex flex-col gap-4">
+            <DynamicDNAGraph riskDNA={riskDNA} />
+            <ExplainabilityModal explanation={latestRiskExplanation} />
+          </div>
+          <div className="col-span-1 flex flex-col gap-4">
+            <DailyStressTestModal />
+            <FullCalendarWidget events={googleCalendarEvents} />
+          </div>
+        </div>
       </main>
     </div>
   );

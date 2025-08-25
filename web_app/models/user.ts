@@ -54,17 +54,17 @@ export interface DynamicRiskDNA {
 export interface User {
   _id?: ObjectId;
   email: string;
-  passwordHash: string;
-  fullName: string;
   createdAt: Date;
   updatedAt: Date;
-  gamification: Gamification;
-  dynamicRiskDNA: DynamicRiskDNA;
-  integrations: Integrations;
-  profile: Profile;
   medicalExpenseForecast?: {
     predictedAnnualCost: number;
     lastCalculated: Date;
   };
-  riskThreshold: number; // Made non-optional to match DashboardData
+  passwordHash: string;
+  fullName: string;
+  // gamification: Gamification;
+  // dynamicRiskDNA: DynamicRiskDNA;
+  // integrations: Integrations;
+  // profile: Profile;
+  // riskThreshold: number; // Made non-optional to match DashboardData
 }

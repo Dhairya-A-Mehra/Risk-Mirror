@@ -1,11 +1,7 @@
 "use client";
 
-import { AuthProvider } from "../context/AuthContext";
+// Authentication provider removed
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <AuthProvider>
-      {children}
-    </AuthProvider>
-  );
+  return <>{children}</>;
 }

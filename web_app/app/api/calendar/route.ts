@@ -1,25 +1,24 @@
 // web_app/app/api/calendar/route.ts
 
-import { NextResponse, NextRequest } from 'next/server';
-import { verifyAuth } from '@/lib/auth';
+import { NextRequest, NextResponse } from 'next/server';
+import { verifyJwt } from '@/lib/jwt';
 import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 import { google } from 'googleapis';
 
-export async function POST(request: NextRequest) {
-  const decodedToken = verifyAuth(request);
-  if (!decodedToken) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
-  const userId = new ObjectId(decodedToken.userId);
 
+export async function POST(request: NextRequest) {
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  const decodedToken = verifyJwt(token);
+  if (!decodedToken) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  const userId = new ObjectId(decodedToken.userId);
   try {
     const { db } = await connectToDatabase();
     const user = await db.collection('users').findOne({ _id: userId });
     if (!user || !user.integrations?.google?.linked || !user.integrations.google.accessToken) {
       return NextResponse.json({ message: 'Google Calendar not linked' }, { status: 400 });
     }
-
     const { summary, start, end } = await request.json();
     const oauth2Client = new google.auth.OAuth2();
     oauth2Client.setCredentials({
@@ -27,7 +26,6 @@ export async function POST(request: NextRequest) {
       refresh_token: user.integrations.google.refreshToken,
       expiry_date: user.integrations.google.expiryDate?.getTime(),
     });
-
     oauth2Client.on('tokens', async (tokens) => {
       if (tokens.access_token) {
         await db.collection('users').updateOne({ _id: userId }, {
@@ -39,17 +37,11 @@ export async function POST(request: NextRequest) {
         });
       }
     });
-
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
     const event = await calendar.events.insert({
       calendarId: 'primary',
-      requestBody: {
-        summary,
-        start,
-        end,
-      },
+      requestBody: { summary, start, end },
     });
-
     return NextResponse.json({ id: event.data.id, summary, start, end }, { status: 200 });
   } catch (error) {
     console.error('Failed to add calendar event:', error);
@@ -57,21 +49,20 @@ export async function POST(request: NextRequest) {
   }
 }
 
+
 export async function PUT(request: NextRequest) {
-  const decodedToken = verifyAuth(request);
-  if (!decodedToken) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  const decodedToken = verifyJwt(token);
+  if (!decodedToken) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   const userId = new ObjectId(decodedToken.userId);
   const eventId = request.nextUrl.pathname.split('/').pop();
-
   try {
     const { db } = await connectToDatabase();
     const user = await db.collection('users').findOne({ _id: userId });
     if (!user || !user.integrations?.google?.linked || !user.integrations.google.accessToken) {
       return NextResponse.json({ message: 'Google Calendar not linked' }, { status: 400 });
     }
-
     const { summary, start, end } = await request.json();
     const oauth2Client = new google.auth.OAuth2();
     oauth2Client.setCredentials({
@@ -79,18 +70,12 @@ export async function PUT(request: NextRequest) {
       refresh_token: user.integrations.google.refreshToken,
       expiry_date: user.integrations.google.expiryDate?.getTime(),
     });
-
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
     await calendar.events.update({
       calendarId: 'primary',
       eventId,
-      requestBody: {
-        summary,
-        start,
-        end,
-      },
+      requestBody: { summary, start, end },
     });
-
     return NextResponse.json({ message: 'Event updated' }, { status: 200 });
   } catch (error) {
     console.error('Failed to update calendar event:', error);
@@ -98,34 +83,31 @@ export async function PUT(request: NextRequest) {
   }
 }
 
+
 export async function DELETE(request: NextRequest) {
-  const decodedToken = verifyAuth(request);
-  if (!decodedToken) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
-  }
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  const decodedToken = verifyJwt(token);
+  if (!decodedToken) return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   const userId = new ObjectId(decodedToken.userId);
   const eventId = request.nextUrl.pathname.split('/').pop();
-
   try {
     const { db } = await connectToDatabase();
     const user = await db.collection('users').findOne({ _id: userId });
     if (!user || !user.integrations?.google?.linked || !user.integrations.google.accessToken) {
       return NextResponse.json({ message: 'Google Calendar not linked' }, { status: 400 });
     }
-
     const oauth2Client = new google.auth.OAuth2();
     oauth2Client.setCredentials({
       access_token: user.integrations.google.accessToken,
       refresh_token: user.integrations.google.refreshToken,
       expiry_date: user.integrations.google.expiryDate?.getTime(),
     });
-
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
     await calendar.events.delete({
       calendarId: 'primary',
       eventId,
     });
-
     return NextResponse.json({ message: 'Event deleted' }, { status: 200 });
   } catch (error) {
     console.error('Failed to delete calendar event:', error);

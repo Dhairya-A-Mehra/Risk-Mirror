@@ -1,14 +1,18 @@
 
 
-import { NextResponse, NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
-import { verifyAuth } from '@/lib/auth';
+import { verifyJwt } from '@/lib/jwt';
 import { User } from '@/models/user';
 import { ObjectId } from 'mongodb';
 
 export async function PUT(request: NextRequest) {
-  
-  const decodedToken = verifyAuth(request);
+  // Read JWT from sessionToken cookie (same as /api/auth/me)
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+  const decodedToken = verifyJwt(token);
   if (!decodedToken) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
@@ -41,12 +45,10 @@ export async function PUT(request: NextRequest) {
     );
 
     if (result.matchedCount === 0) {
-     
       return NextResponse.json({ message: 'User not found' }, { status: 404 });
     }
 
     if (result.modifiedCount === 0 && result.matchedCount === 1) {
-    
       return NextResponse.json({ message: 'No changes detected' }, { status: 200 });
     }
 

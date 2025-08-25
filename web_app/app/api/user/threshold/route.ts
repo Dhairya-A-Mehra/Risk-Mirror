@@ -6,7 +6,9 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { ObjectId } from 'mongodb';
 
 export async function POST(request: NextRequest) {
-  const decodedToken = verifyAuth(request);
+  // Extract sessionToken from cookies
+  const token = request.cookies.get('sessionToken')?.value;
+  const decodedToken = token ? verifyAuth(token) : null;
   if (!decodedToken) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }

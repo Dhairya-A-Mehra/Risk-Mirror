@@ -1,14 +1,20 @@
 
 
-import { NextResponse, NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
-import { verifyAuth } from '@/lib/auth';
+import { verifyJwt } from '@/lib/jwt';
 import { ObjectId } from 'mongodb';
+
 import { User } from '@/models/user';
 import { LeaderboardData, LeaderboardEntry } from '@/models/leaderboard';
 
+  // Read JWT from sessionToken cookie (same as /api/auth/me)
 export async function GET(request: NextRequest) {
-  const decodedToken = verifyAuth(request);
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+  const decodedToken = verifyJwt(token);
   if (!decodedToken) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
@@ -32,44 +38,45 @@ export async function GET(request: NextRequest) {
     const topUsers = await topUsersCursor.toArray();
 
     const currentUserRank = await usersCollection.countDocuments({
-      'gamification.leaderboardScore': { $gt: topUsers.find(u => u._id.equals(currentUserId))?.gamification.leaderboardScore ?? -1 }
+  'gamification.leaderboardScore': { $gt: topUsers.find(u => u._id.equals(currentUserId)) ? (u => (u as any).gamification?.leaderboardScore)(topUsers.find(u => u._id.equals(currentUserId))) : -1 }
     }) + 1;
 
     let currentUserData: LeaderboardEntry | null = null;
     
     const formattedTopUsers: LeaderboardEntry[] = topUsers.map((user, index) => {
+      const u = user as any;
       const entry: LeaderboardEntry = {
         rank: index + 1,
-        userId: user._id!,
-        fullName: user.fullName,
-        avatar: user.profile.avatar,
-        combinedScore: user.gamification.leaderboardScore,
-        streakScore: user.gamification.streak.current,
-        riskFitnessScore: user.dynamicRiskDNA.overallScore,
-        badges: user.gamification.badges.slice(0, 3), 
+        userId: u._id!,
+        fullName: u.fullName,
+        avatar: u.profile?.avatar,
+        combinedScore: u.gamification?.leaderboardScore,
+        streakScore: u.gamification?.streak?.current,
+        riskFitnessScore: u.dynamicRiskDNA?.overallScore,
+        badges: u.gamification?.badges?.slice(0, 3) || [],
       };
 
-      if (user._id.equals(currentUserId)) {
-        
+      if (u._id.equals(currentUserId)) {
         currentUserData = { ...entry, rank: currentUserRank };
       }
       return entry;
     });
 
     if (!currentUserData) {
-        const user = await usersCollection.findOne({ _id: currentUserId });
-        if (user) {
-            currentUserData = {
-                rank: currentUserRank,
-                userId: user._id!,
-                fullName: user.fullName,
-                avatar: user.profile.avatar,
-                combinedScore: user.gamification.leaderboardScore,
-                streakScore: user.gamification.streak.current,
-                riskFitnessScore: user.dynamicRiskDNA.overallScore,
-                badges: user.gamification.badges.slice(0, 3),
-            };
-        }
+      const user = await usersCollection.findOne({ _id: currentUserId });
+      if (user) {
+        const u = user as any;
+        currentUserData = {
+          rank: currentUserRank,
+          userId: u._id!,
+          fullName: u.fullName,
+          avatar: u.profile?.avatar,
+          combinedScore: u.gamification?.leaderboardScore,
+          streakScore: u.gamification?.streak?.current,
+          riskFitnessScore: u.dynamicRiskDNA?.overallScore,
+          badges: u.gamification?.badges?.slice(0, 3) || [],
+        };
+      }
     }
 
     const leaderboardData: LeaderboardData = {

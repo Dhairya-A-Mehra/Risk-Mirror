@@ -1,14 +1,21 @@
+
 import { NextResponse, NextRequest } from 'next/server';
-import { verifyAuth } from '@/lib/auth';
+import { verifyJwt } from '@/lib/jwt';
 import { connectToDatabase } from '@/lib/mongodb';
 import { DashboardData } from '@/models/dashboard';
 import { ObjectId } from 'mongodb';
 
-export async function GET(request: NextRequest) {
-  const decodedToken = await verifyAuth(request);
 
+export async function GET(request: NextRequest) {
+  // Get JWT from sessionToken cookie
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) {
+    console.log('Unauthorized request to /api/dashboard (no token)');
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+  const decodedToken = verifyJwt(token);
   if (!decodedToken) {
-    console.log('Unauthorized request to /api/dashboard');
+    console.log('Unauthorized request to /api/dashboard (invalid token)');
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 

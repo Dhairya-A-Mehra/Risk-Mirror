@@ -1,37 +1,28 @@
 
+
+
+
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { ProfileClient } from '@/components/profile/ProfileClient';
-import { User } from '@/models/user';
 import { Navbar, NavbarUser } from '@/components/layout/Navbar';
-
-async function getUserProfile(): Promise<User | null> {
-  const cookieStore = await cookies();
-  const sessionToken = cookieStore.get('sessionToken')?.value;
-  if (!sessionToken) return null;
-
-  try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/auth/me`, {
-      headers: { Cookie: `sessionToken=${sessionToken}` },
-      cache: 'no-store',
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch (error) {
-    console.error('Failed to fetch user profile:', error);
-    return null;
-  }
-}
+import { verifyJwt } from '@/lib/jwt';
+import { connectToDatabase } from '@/lib/mongodb';
+import { ObjectId } from 'mongodb';
 
 export default async function ProfilePage() {
-  const user = await getUserProfile();
-
-  if (!user) {
-  redirect('/login');
+  const token = (await cookies()).get('sessionToken')?.value;
+  const decodedToken = token ? verifyJwt(token) : null;
+  if (!decodedToken) {
+    redirect('/login');
   }
-  
+  // Fetch full user from DB using userId from JWT
+  const { db } = await connectToDatabase();
+  const user = await db.collection('users').findOne({ _id: new ObjectId(decodedToken.userId) });
+  if (!user) {
+    redirect('/login');
+  }
   const userDataForNavbar: NavbarUser = { fullName: user.fullName };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white flex flex-col relative overflow-hidden">
       {/* Animated Background Elements to match landing page */}
@@ -42,10 +33,11 @@ export default async function ProfilePage() {
       </div>
       <Navbar user={userDataForNavbar} />
       <main className="container mx-auto p-4 sm:p-6 lg:p-8 flex-1 flex flex-col items-center justify-center">
-  <div className="w-full max-w-4xl rounded-2xl shadow-2xl bg-black/40 border border-neutral-800 p-6 backdrop-blur-md">
-          <ProfileClient initialUser={user} />
+        <div className="w-full max-w-4xl rounded-2xl shadow-2xl bg-black/40 border border-neutral-800 p-6 backdrop-blur-md">
+          <ProfileClient initialUser={user as any} />
         </div>
       </main>
     </div>
   );
 }
+

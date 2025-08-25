@@ -1,8 +1,8 @@
 
 
-import { NextResponse, NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
-import { verifyAuth } from '@/lib/auth';
+import { verifyJwt } from '@/lib/jwt';
 import { ObjectId } from 'mongodb';
 
 import { User } from '@/models/user';
@@ -11,9 +11,14 @@ import { Insight } from '@/models/insight';
 import { ExplainabilityLog } from '@/models/explainabilityLog';
 import { HealthPageData } from '@/models/healthPage'; 
 
-export async function GET(request: NextRequest) {
 
-  const decodedToken = await verifyAuth(request);
+export async function GET(request: NextRequest) {
+  // Read JWT from sessionToken cookie (same as /api/auth/me)
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+  const decodedToken = verifyJwt(token);
   if (!decodedToken) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
@@ -43,14 +48,14 @@ export async function GET(request: NextRequest) {
     }
     
     const healthPageData: HealthPageData = {
-      wellnessScore: user.dynamicRiskDNA.healthScore,
-      wealthScore: user.dynamicRiskDNA.financialScore,
-      userCity: user.profile?.location?.city,
+      wellnessScore: (user as any).dynamicRiskDNA?.healthScore ?? 0,
+      wealthScore: (user as any).dynamicRiskDNA?.financialScore ?? 0,
+      userCity: (user as any).profile?.location?.city,
       insurancePolicies: policies,
       latestHealthInsights: insights,
       activeHealthPlan: null, 
       latestHealthScoreExplanation: explanation,
-      medicalExpenseForecast: user.medicalExpenseForecast?.predictedAnnualCost || 0,
+      medicalExpenseForecast: (user as any).medicalExpenseForecast?.predictedAnnualCost || 0,
     };
 
     return NextResponse.json(healthPageData, { status: 200 });

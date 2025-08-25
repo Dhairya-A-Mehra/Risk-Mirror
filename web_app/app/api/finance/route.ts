@@ -1,8 +1,9 @@
 
 
-import { NextResponse, NextRequest } from 'next/server';
+
+import { NextRequest, NextResponse } from 'next/server';
 import { connectToDatabase } from '@/lib/mongodb';
-import { verifyAuth } from '@/lib/auth';
+import { verifyJwt } from '@/lib/jwt';
 import { ObjectId } from 'mongodb';
 import { User } from '@/models/user';
 import { Transaction } from '@/models/transaction';
@@ -12,7 +13,12 @@ import { ExplainabilityLog } from '@/models/explainabilityLog';
 import { FinancePageData } from '@/models/financePage';
 
 export async function GET(request: NextRequest) {
-  const decodedToken = await verifyAuth(request);
+  // Read JWT from sessionToken cookie (same as /api/auth/me)
+  const token = request.cookies.get('sessionToken')?.value;
+  if (!token) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+  }
+  const decodedToken = verifyJwt(token);
   if (!decodedToken) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
@@ -41,16 +47,19 @@ export async function GET(request: NextRequest) {
         return acc;
     }, {} as Record<string, number>);
 
-    const loanEligibility = {
-        isEligible: user.dynamicRiskDNA.financialScore > 70,
-        maxAmount: 500000,
-        reason: user.dynamicRiskDNA.financialScore > 70 ? "Strong credit profile and financial score." : "Financial score is below the threshold. Focus on reducing debt."
-    };
+  const financialScore = (user as any).dynamicRiskDNA?.financialScore ?? 0;
+  const healthScore = (user as any).dynamicRiskDNA?.healthScore ?? 0;
+  const financialCalmIndex = (user as any).dynamicRiskDNA?.financialCalmIndex ?? 60;
+  const loanEligibility = {
+    isEligible: financialScore > 70,
+    maxAmount: 500000,
+    reason: financialScore > 70 ? "Strong credit profile and financial score." : "Financial score is below the threshold. Focus on reducing debt."
+  };
 
     const financePageData: FinancePageData = {
-      wellnessScore: user.dynamicRiskDNA.healthScore,
-      wealthScore: user.dynamicRiskDNA.financialScore,
-      financialCalmIndex: user.dynamicRiskDNA.financialCalmIndex || 60,
+      wellnessScore: healthScore,
+      wealthScore: financialScore,
+      financialCalmIndex,
       recentTransactions: transactions.slice(0, 10), // only first 10 for display
       spendingByCategory: Object.entries(spendingByCategory).map(([category, amount]) => ({ category, amount })),
       investmentPortfolio: portfolio,

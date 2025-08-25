@@ -8,6 +8,9 @@ export function ExplainabilityModal({ explanation }: { explanation: Explainabili
     return <Button variant="outline" className="w-full" disabled>Explanation Unavailable</Button>;
   }
 
+  if (!explanation || !Array.isArray(explanation.featureImportances)) {
+    return null;
+  }
   const sortedFeatures = explanation.featureImportances.sort((a, b) => Math.abs(b.value) - Math.abs(a.value));
 
   return (

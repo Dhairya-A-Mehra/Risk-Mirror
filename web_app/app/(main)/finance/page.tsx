@@ -41,7 +41,7 @@ export default async function FinancePage() {
   const sessionToken = sessionCookies.get('sessionToken')?.value;
   
   if (!sessionToken) {
-  redirect('/login');
+    redirect('/login');
   }
 
   const [financeData, userDataForNavbar] = await Promise.all([
@@ -50,7 +50,15 @@ export default async function FinancePage() {
   ]);
   
   if (!financeData) {
-  redirect('/login');
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-800 via-teal-700 via-teal-800 to-cyan-900 text-white">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold mb-4">Unable to load your finance data</h1>
+          <p className="mb-6">We couldn't fetch your finance information. Please try again later or contact support if the issue persists.</p>
+          <a href="/" className="text-cyan-400 underline">Go back to Dashboard</a>
+        </div>
+      </div>
+    );
   }
 
   return (
