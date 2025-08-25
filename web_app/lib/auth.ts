@@ -18,25 +18,28 @@ export async function verifyAuth(req?: NextRequest): Promise<DecodedToken | null
   if (req) {
     // For API routes or middleware
     token = req.cookies.get('sessionToken')?.value;
+    console.log('[verifyAuth] Token from req.cookies:', token);
   } else {
     // For server components
     token = (await cookies()).get('sessionToken')?.value;
+    console.log('[verifyAuth] Token from cookies():', token);
   }
 
   if (!token) {
-    console.log('No session token found');
+    console.log('[verifyAuth] No session token found');
     return null;
   }
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as DecodedToken;
+    console.log('[verifyAuth] Decoded token:', decoded);
     if (!ObjectId.isValid(decoded.userId)) {
-      console.log('Invalid ObjectId in token');
+      console.log('[verifyAuth] Invalid ObjectId in token:', decoded.userId);
       return null;
     }
     return decoded;
   } catch (error) {
-    console.error('JWT verification failed:', error);
+    console.error('[verifyAuth] JWT verification failed:', error);
     return null;
   }
 }

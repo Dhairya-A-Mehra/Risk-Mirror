@@ -7,7 +7,7 @@ import { ObjectId } from 'mongodb';
 import { Plan } from '@/models/plan';
 
 export async function GET(request: NextRequest) {
-  const decodedToken = verifyAuth(request);
+  const decodedToken = await verifyAuth(request);
   if (!decodedToken) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }

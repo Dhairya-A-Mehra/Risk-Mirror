@@ -27,7 +27,7 @@ export default async function ProfilePage() {
   const user = await getUserProfile();
 
   if (!user) {
-    redirect('/signin');
+  redirect('/login');
   }
   
   const userDataForNavbar: NavbarUser = { fullName: user.fullName };

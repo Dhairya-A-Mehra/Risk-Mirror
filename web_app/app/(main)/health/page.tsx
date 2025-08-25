@@ -8,7 +8,9 @@ import { Navbar, NavbarUser } from '@/components/layout/Navbar';
 
 async function getHealthData(sessionToken: string): Promise<HealthPageData | null> {
   try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/health`, {
+    // Use absolute URL for server-side fetch
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const res = await fetch(`${baseUrl}/api/health`, {
       headers: { Cookie: `sessionToken=${sessionToken}` },
       cache: 'no-store',
     });
@@ -45,7 +47,7 @@ export default async function HealthPage() {
   const sessionToken = (await cookies()).get('sessionToken')?.value;
 
   if (!sessionToken) {
-    redirect('/signin');
+  redirect('/login');
   }
 
   const [healthData, userDataForNavbar] = await Promise.all([
@@ -54,7 +56,7 @@ export default async function HealthPage() {
   ]);
 
   if (!healthData) {
-    redirect('/signin');
+  redirect('/login');
   }
 
   return (

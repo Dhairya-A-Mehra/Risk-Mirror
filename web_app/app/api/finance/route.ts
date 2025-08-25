@@ -12,7 +12,7 @@ import { ExplainabilityLog } from '@/models/explainabilityLog';
 import { FinancePageData } from '@/models/financePage';
 
 export async function GET(request: NextRequest) {
-  const decodedToken = verifyAuth(request);
+  const decodedToken = await verifyAuth(request);
   if (!decodedToken) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }

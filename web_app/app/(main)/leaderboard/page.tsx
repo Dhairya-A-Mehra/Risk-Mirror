@@ -35,7 +35,7 @@ async function getUserForNavbar(sessionToken: string): Promise<NavbarUser | null
 export default async function LeaderboardPage() {
   const cookieStore = await cookies();
   const sessionToken = cookieStore.get('sessionToken')?.value;
-  if (!sessionToken) { redirect('/signin'); }
+  if (!sessionToken) { redirect('/login'); }
 
   const [leaderboardData, userDataForNavbar] = await Promise.all([
     getLeaderboardData(sessionToken),

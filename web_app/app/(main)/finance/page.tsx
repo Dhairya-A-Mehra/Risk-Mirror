@@ -7,7 +7,9 @@ import { Navbar, NavbarUser } from '@/components/layout/Navbar';
 
 async function getFinanceData(sessionToken: string): Promise<FinancePageData | null> {
   try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/finance`, {
+    // Use absolute URL for server-side fetch
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    const res = await fetch(`${baseUrl}/api/finance`, {
       headers: { Cookie: `sessionToken=${sessionToken}` },
       cache: 'no-store',
     });
@@ -39,7 +41,7 @@ export default async function FinancePage() {
   const sessionToken = sessionCookies.get('sessionToken')?.value;
   
   if (!sessionToken) {
-    redirect('/signin');
+  redirect('/login');
   }
 
   const [financeData, userDataForNavbar] = await Promise.all([
@@ -48,7 +50,7 @@ export default async function FinancePage() {
   ]);
   
   if (!financeData) {
-    redirect('/signin');
+  redirect('/login');
   }
 
   return (

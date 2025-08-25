@@ -13,7 +13,7 @@ import { HealthPageData } from '@/models/healthPage';
 
 export async function GET(request: NextRequest) {
 
-  const decodedToken = verifyAuth(request);
+  const decodedToken = await verifyAuth(request);
   if (!decodedToken) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }

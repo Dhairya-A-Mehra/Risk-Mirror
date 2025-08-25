@@ -30,18 +30,19 @@ export async function POST(request: NextRequest) {
       .setExpirationTime('1h')
       .sign(new TextEncoder().encode(process.env.JWT_SECRET!));
 
-    // Set cookie
+    // Set cookie with best practices
     const response = NextResponse.json({ success: true, user: { email, fullName: user.fullName } });
     response.cookies.set('sessionToken', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 3600, // 1 hour
+      secure: process.env.NODE_ENV === 'production' ? true : false,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 3600,
     });
-
+    console.log('[login API] Set-Cookie header:', response.cookies);
     return response;
   } catch (error) {
-  console.error('Login error:', error);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    console.error('Login error:', error);
+    return NextResponse.json({ message: 'Login failed' }, { status: 500 });
   }
 }

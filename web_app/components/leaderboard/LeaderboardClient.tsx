@@ -51,7 +51,10 @@ export function LeaderboardClient({ initialData }: { initialData: ClientLeaderbo
       </div>
       <div className="col-span-2 text-center font-bold text-lg text-[#232e52]">{user.combinedScore.toLocaleString()}</div>
   <div className="col-span-2 flex items-center justify-center gap-1 text-sm text-blue-900"><Flame className="h-4 w-4 text-orange-500" /> {user.streakScore}</div>
-  <div className="col-span-1 flex items-center justify-center gap-1 text-sm text-blue-900"><ShieldCheck className="h-4 w-4 text-green-500" /> {user.riskFitnessScore.toFixed(0)}</div>
+  <div className="col-span-1 flex items-center justify-center gap-1 text-sm text-blue-900">
+    <ShieldCheck className="h-4 w-4 text-green-500" />
+    {typeof user.riskFitnessScore === 'number' ? user.riskFitnessScore.toFixed(0) : '--'}
+  </div>
       <div className="col-span-2 flex items-center justify-center gap-2">
         {user.badges.map(badge => <BadgeIcon key={badge} badgeName={badge} />)}
       </div>

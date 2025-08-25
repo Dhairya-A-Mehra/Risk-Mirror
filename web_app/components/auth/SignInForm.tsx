@@ -26,7 +26,7 @@ const formSchema = z.object({
   password: z.string().min(1, { message: "Password is required." }),
 });
 
-export function SignInForm() {
+export function LoginForm() {
   const router = useRouter();
   const { login } = useAuth(); 
   const [isLoading, setIsLoading] = useState(false);
@@ -39,11 +39,12 @@ export function SignInForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     try {
-      
-      const response = await fetch('/api/auth/signin', {
+      // Login request with credentials
+      const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(values),
+        credentials: 'include',
       });
 
       const data = await response.json();
@@ -51,13 +52,14 @@ export function SignInForm() {
         throw new Error(data.message || 'Something went wrong');
       }
 
-      const userResponse = await fetch('/api/auth/me');
+      // Fetch user session with credentials
+      const userResponse = await fetch('/api/auth/me', { credentials: 'include' });
       if (!userResponse.ok) {
         throw new Error('Failed to fetch user data after sign-in.');
       }
       const userData = await userResponse.json();
       
-      login(userData);
+  login(userData.user);
       
       toast.success('Signed in successfully!');
       router.push('/dashboard');
@@ -112,7 +114,7 @@ export function SignInForm() {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
                   </svg>
-                  Signing In...
+                  Logging In...
                 </span>
               ) : 'Sign In'}
             </Button>

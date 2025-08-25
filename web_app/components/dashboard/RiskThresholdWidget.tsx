@@ -30,6 +30,7 @@ export function RiskThresholdWidget({ user }: { user: Pick<User, 'gamification' 
     }
   };
 
+  const streak = user?.gamification?.streak ?? { current: 0, longest: 0 };
   return (
     <Card className="bg-gray-800/80 backdrop-blur-lg border border-blue-400/30 rounded-2xl shadow-2xl h-full">
       <CardHeader>
@@ -38,8 +39,8 @@ export function RiskThresholdWidget({ user }: { user: Pick<User, 'gamification' 
       </CardHeader>
       <CardContent className="p-6">
         <div className="mb-4">
-          <p className="text-sm text-white">Current Streak: {user.gamification.streak.current} days</p>
-          <p className="text-sm text-white">Longest Streak: {user.gamification.streak.longest} days</p>
+          <p className="text-sm text-white">Current Streak: {streak.current} days</p>
+          <p className="text-sm text-white">Longest Streak: {streak.longest} days</p>
         </div>
         <div className="space-y-4">
           <Input

@@ -28,36 +28,54 @@ export async function GET(request: NextRequest) {
     }
 
     // Exchange code for tokens
-    const { tokens } = await oauth2Client.getToken(code);
-    oauth2Client.setCredentials(tokens);
+    let tokens;
+    try {
+      const tokenResponse = await oauth2Client.getToken(code);
+      tokens = tokenResponse.tokens;
+      oauth2Client.setCredentials(tokens);
+    } catch (tokenError) {
+      console.error('Error exchanging code for tokens:', tokenError);
+      return NextResponse.redirect('/onboarding/connect-calendar?error=token_exchange_failed');
+    }
 
     // Get user info
-    const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
-    const userInfo = await oauth2.userinfo.get();
+    let userInfo;
+    try {
+      const oauth2 = google.oauth2({ version: 'v2', auth: oauth2Client });
+      userInfo = await oauth2.userinfo.get();
+    } catch (userInfoError) {
+      console.error('Error fetching user info:', userInfoError);
+      return NextResponse.redirect('/onboarding/connect-calendar?error=userinfo_failed');
+    }
 
     // Get user from session
-    const user = verifyAuth(request);
+    const user = await verifyAuth(request);
     if (!user) {
       return NextResponse.redirect('/login?error=not_authenticated');
     }
 
     // Update user's Google Calendar connection in database
-    const { db } = await connectToDatabase();
-    await db.collection('users').updateOne(
-      { _id: new ObjectId(user.userId) },
-      {
-        $set: {
-          'integrations.google': {
-            linked: true,
-            accessToken: tokens.access_token,
-            refreshToken: tokens.refresh_token,
-            email: userInfo.data.email,
-            name: userInfo.data.name,
-            connectedAt: new Date()
+    try {
+      const { db } = await connectToDatabase();
+      await db.collection('users').updateOne(
+        { _id: new ObjectId(user.userId) },
+        {
+          $set: {
+            'integrations.google': {
+              linked: true,
+              accessToken: tokens.access_token,
+              refreshToken: tokens.refresh_token,
+              email: userInfo.data.email,
+              name: userInfo.data.name,
+              connectedAt: new Date()
+            }
           }
         }
-      }
-    );
+      );
+    } catch (dbError) {
+      console.error('Error updating user in DB:', dbError);
+      return NextResponse.redirect('/onboarding/connect-calendar?error=db_update_failed');
+    }
 
     // Redirect to survey page
     return NextResponse.redirect('/survey?calendar_connected=true');

@@ -40,16 +40,15 @@ export function FullCalendarWidget({ events }: { events: CalendarEvent[] }) {
     [events]
   );
 
+  // Use ISO format for all date attributes to avoid hydration mismatch
   const formatDate = (dateInfo: { dateTime?: string; date?: string }) => {
     const dateStr = dateInfo.dateTime || dateInfo.date;
     if (!dateStr) return "Date not specified";
     const eventDate = new Date(dateStr);
     if (isNaN(eventDate.getTime())) return "Invalid date";
     if (dateInfo.date) return "All-day";
-    if (isToday(eventDate)) {
-      return eventDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
-    }
-    return eventDate.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
+    // Always use ISO string for SSR/CSR consistency
+    return eventDate.toISOString();
   };
 
   const handleAddEvent = async () => {

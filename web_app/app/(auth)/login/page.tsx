@@ -1,8 +1,8 @@
 
-import { SignInForm } from "@/components/auth/SignInForm";
+import { LoginForm } from "@/components/auth/SignInForm";
 import Link from "next/link";
 
-export default function SignInPage() {
+export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex bg-gradient-to-br from-blue-900 via-teal-900 to-cyan-900 relative overflow-hidden">
       
@@ -26,7 +26,7 @@ export default function SignInPage() {
               Sign in to access your Risk Mirror dashboard.
             </p>
           </div>
-          <SignInForm />
+          <LoginForm />
           <p className="mt-4 text-center text-sm text-white/70">
             Don&apos;t have an account?{' '}
             <Link href="/signup" className="font-medium text-cyan-400 hover:text-cyan-300">
